@@ -34,8 +34,8 @@ Route::middleware('auth.apikey')->group(
 
 
             Route::group(['middleware' => ['role:admin']], function () {
-                /*  Route::apiResource('roles', App\Http\Controllers\Api\RoleController::class);
-                Route::apiResource('permissions', App\Http\Controllers\Api\PermissionController::class);*/
+                Route::apiResource('roles', App\Http\Controllers\Api\RoleController::class);
+                Route::apiResource('permissions', App\Http\Controllers\Api\PermissionController::class);
             });
         });
     }
