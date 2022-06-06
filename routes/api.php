@@ -26,6 +26,12 @@ Route::middleware('auth.apikey')->group(
         Route::post('auth/register', [App\Http\Controllers\Api\UserController::class, 'register']);
         Route::post('auth/login', [App\Http\Controllers\Api\UserController::class, 'login']);
 
+        Route::post('auth/login/facebook', [App\Http\Controllers\Api\SocialApiAuthFacebookController::class, 'facebookConnect']);
+        //  Route::post('auth/login/linkedin', [App\Http\Controllers\Api\SocialApiAuthLinkedinController::class, 'linkedinConnect']);
+        Route::post('auth/login/google', [App\Http\Controllers\Api\SocialApiAuthGoogleController::class, 'googleConnect']);
+        Route::post('auth/login/osm', [App\Http\Controllers\Api\SocialApiAuthOsmController::class, 'osmConnect']);
+
+
         Route::middleware('auth:api')->group(function () {
             Route::get('auth/logout', [App\Http\Controllers\Api\UserController::class, 'logout']);
             Route::post('user/update/{id}', [App\Http\Controllers\Api\UserController::class, 'update']);
