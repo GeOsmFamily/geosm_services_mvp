@@ -19,6 +19,8 @@ class UserController extends BaseController
      * @group Account management
      * @bodyParam last_name string required the name of the user. Example: GeOsm
      * @bodyParam first_name string required the first name of the user. Example: Family
+     * @bodyParam titre string  the email of the user. Example: Titre
+     * @bodyParam osm_changeset string  The phone number of the user. Example:10
      * @bodyParam email string required the email of the user. Example: user@geosm.org
      * @bodyParam password string required the password of the user. Example: password
      * @bodyParam phone string The phone number of the user. Example:+237699999999
@@ -29,6 +31,8 @@ class UserController extends BaseController
         $validator = Validator::make($request->all(), [
             'last_name' => 'string|max:255',
             'first_name' => 'string|max:255',
+            'titre' => 'string|max:255',
+            'osm_changeset' => 'string|max:255',
             'email' => 'email|unique:users,email',
             'password' => 'string|between:6,20',
             'profile_picture' => 'mimes:png,jpg,jpeg|max:20000'
@@ -45,7 +49,11 @@ class UserController extends BaseController
             $fileName = time() . '_' . $request->profile_picture->getClientOriginalName();
             $filePath = $request->file('profile_picture')->storeAs('uploads/users/profils', $fileName, 'public');
             $input['profile_picture'] = '/storage/' . $filePath;
+        } else {
+            $input['profile_picture'] = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($input['email']))) . '?s=200&d=mm';
         }
+
+
 
         try {
             DB::beginTransaction();
@@ -69,9 +77,8 @@ class UserController extends BaseController
      *
      * @header Content-Type application/json
      * @group Account management
-     * @bodyParam email string required if phone not found the email of the user. Example: user@geosm.org
-     * @bodyParam password string required the password of the user. Example: password
-     * @bodyParam phone int required if email not found The phone number of the user. Example:+237699999999
+     * @bodyParam email string required if phone not found the email of the user. Example: infos@geo.sm
+     * @bodyParam password string required the password of the user. Example: secret
      */
     public function login(Request $request)
     {
@@ -159,7 +166,9 @@ class UserController extends BaseController
      * @urlParam id int required the id of the admin. Example: 1
      * @bodyParam last_name string  the name of the user. Example: GeOsm
      * @bodyParam first_name string  the first name of the user. Example: Family
-     * @bodyParam phone string The phone number of the user. Example:+237699999999
+     * @bodyParam titre string  the email of the user. Example: Titre
+     * @bodyParam osm_changeset string  The phone number of the user. Example:10
+     * @bodyParam phone string The phone number of the user. Example:+237699999998
      * @bodyParam profile_picture file The profile picture of the user.
      */
     public function update(Request $request, $id)
@@ -170,6 +179,8 @@ class UserController extends BaseController
             $validator = Validator::make($request->all(), [
                 'last_name' => 'string|max:255',
                 'first_name' => 'string|max:255',
+                'titre' => 'string|max:255',
+                'osm_changeset' => 'string',
                 'phone' => 'string|max:255',
                 'profile_picture' => 'mimes:png,jpg,jpeg|max:20000'
             ]);
@@ -186,6 +197,8 @@ class UserController extends BaseController
                 $user->last_name = $request->last_name ?? $user->last_name;
                 $user->first_name = $request->first_name ?? $user->first_name;
                 $user->phone = $request->phone ?? $user->phone;
+                $user->titre = $request->titre ?? $user->titre;
+                $user->osm_changeset = $request->osm_changeset ?? $user->osm_changeset;
 
                 if ($request->file()) {
                     $fileName = time() . '_' . $request->profile_picture->getClientOriginalName();

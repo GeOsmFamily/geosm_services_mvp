@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Social\SocialFacebookAccount;
+use App\Models\Social\SocialGoogleAccount;
+use App\Models\Social\SocialLinkedInAccount;
+use App\Models\Social\SocialOsmAccount;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -61,6 +65,14 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Query\Builder|User withTrashed()
  * @method static \Illuminate\Database\Query\Builder|User withoutTrashed()
  * @mixin \Eloquent
+ * @property string|null $titre
+ * @property string|null $osm_changeset
+ * @property-read SocialFacebookAccount|null $facebook
+ * @property-read SocialGoogleAccount|null $google
+ * @property-read SocialLinkedInAccount|null $linkedin
+ * @property-read SocialOsmAccount|null $osm
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOsmChangeset($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereTitre($value)
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -76,6 +88,8 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'last_name',
         'first_name',
+        'titre',
+        'osm_changeset',
         'email',
         'password',
         'phone',
@@ -104,4 +118,24 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function facebook()
+    {
+        return $this->hasOne(SocialFacebookAccount::class);
+    }
+
+    public function google()
+    {
+        return $this->hasOne(SocialGoogleAccount::class);
+    }
+
+    public function linkedin()
+    {
+        return $this->hasOne(SocialLinkedInAccount::class);
+    }
+
+    public function osm()
+    {
+        return $this->hasOne(SocialOsmAccount::class);
+    }
 }
