@@ -31,12 +31,31 @@ Route::middleware('auth.apikey')->group(
         Route::post('auth/login/google', [App\Http\Controllers\Api\SocialApiAuthGoogleController::class, 'googleConnect']);
         Route::post('auth/login/osm', [App\Http\Controllers\Api\SocialApiAuthOsmController::class, 'osmConnect']);
 
+        //GroupeCarte
+        Route::get('groupecartes', [App\Http\Controllers\Api\GroupeCarteController::class, 'index']);
+        Route::get('groupecartes/{id}', [App\Http\Controllers\Api\GroupeCarteController::class, 'show']);
+
+        //Carte
+        Route::get('cartes', [App\Http\Controllers\Api\CarteController::class, 'index']);
+        Route::get('cartes/{id}', [App\Http\Controllers\Api\CarteController::class, 'show']);
+
+
 
         Route::middleware('auth:api')->group(function () {
             Route::get('auth/logout', [App\Http\Controllers\Api\UserController::class, 'logout']);
             Route::post('user/update/{id}', [App\Http\Controllers\Api\UserController::class, 'update']);
             Route::delete('user/delete/{id}', [App\Http\Controllers\Api\UserController::class, 'destroy']);
             Route::get('user/me', [App\Http\Controllers\Api\UserController::class, 'me']);
+
+            Route::post('groupecartes', [App\Http\Controllers\Api\GroupeCarteController::class, 'store']);
+            Route::put('groupecartes/{id}', [App\Http\Controllers\Api\GroupeCarteController::class, 'update']);
+            Route::delete('groupecartes/{id}', [App\Http\Controllers\Api\GroupeCarteController::class, 'destroy']);
+
+
+            Route::post('cartes', [App\Http\Controllers\Api\CarteController::class, 'store']);
+            Route::put('cartes/{id}', [App\Http\Controllers\Api\CarteController::class, 'update']);
+            Route::delete('cartes/{id}', [App\Http\Controllers\Api\CarteController::class, 'destroy']);
+
 
 
             Route::group(['middleware' => ['role:admin']], function () {
