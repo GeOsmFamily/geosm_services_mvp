@@ -13,10 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('groupe_cartes', function (Blueprint $table) {
+        Schema::create('thematiques', function (Blueprint $table) {
             $table->id();
             $table->string('nom');
-            $table->string('nom_en')->nullable();
+            $table->string('nom_en');
+            $table->string('image_src')->nullable();
+            $table->string('schema')->nullable();
+            $table->string('color')->default('#808080');
+            $table->integer('ordre');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -29,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('groupe_cartes');
+        Schema::dropIfExists('thematiques');
     }
 };

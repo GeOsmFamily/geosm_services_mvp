@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Carte;
+use App\Models\Instance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -46,6 +47,7 @@ class CarteController extends BaseController
      * @bodyParam zmax int the carte zmax. Example: 10
      * @bodyParam zmin int the carte zmin. Example: 1
      * @bodyParam commentaire string the carte commentaire. Example: Carte 1
+     * @bodyParam instance_id int the carte instance id. Example: 1
      */
     public function store(Request $request)
     {
@@ -83,7 +85,14 @@ class CarteController extends BaseController
             try {
                 DB::beginTransaction();
 
-                $carte = Carte::created($input);
+                $carte = Carte::create($input);
+
+                if ($request->instance_id) {
+                    $instance = Instance::find($request->instance_id);
+
+                    $instance->cartes()->attach($carte->id);
+                }
+
 
                 DB::commit();
 
@@ -215,6 +224,8 @@ class CarteController extends BaseController
             }
             try {
                 DB::beginTransaction();
+
+                $carte->instances()->detach();
 
                 $carte->delete();
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\GroupeCarte;
+use App\Models\Instance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,7 @@ class GroupeCarteController extends BaseController
      * @authenticated
      * @header Content-Type application/json
      * @bodyParam nom string required the group carte name. Example: Groupe 1
+     * @bodyParam instance_id int the group carte instance id. Example: 1
      */
     public function store(Request $request)
     {
@@ -57,7 +59,14 @@ class GroupeCarteController extends BaseController
             try {
                 DB::beginTransaction();
 
-                $groupe = GroupeCarte::created($input);
+                $groupe = GroupeCarte::create($input);
+
+                if ($input['instance_id']) {
+                    $instance = Instance::find($input['instance_id']);
+                    $instance->groupesCartes()->attach($groupe->id);
+                }
+
+
 
                 DB::commit();
 
@@ -160,6 +169,10 @@ class GroupeCarteController extends BaseController
 
             try {
                 DB::beginTransaction();
+
+                $groupe->instances()->detach();
+
+                $groupe->cartes()->delete();
 
                 $groupe->delete();
 

@@ -13,10 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('groupe_cartes', function (Blueprint $table) {
+        Schema::create('tags', function (Blueprint $table) {
             $table->id();
-            $table->string('nom');
-            $table->string('nom_en')->nullable();
+            $table->integer('couche_id')->unsigned();
+            $table->string('key');
+            $table->string('value');
+            $table->string('operateur');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('groupe_cartes');
+        Schema::dropIfExists('tags');
     }
 };
