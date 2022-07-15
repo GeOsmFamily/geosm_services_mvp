@@ -76,9 +76,4 @@ class Carte extends Model
     {
         return $this->belongsTo(GroupeCarte::class);
     }
-
-    public function instances()
-    {
-        return $this->belongsToMany(Instance::class, 'carte_instances', 'carte_id', 'instance_id');
-    }
 }

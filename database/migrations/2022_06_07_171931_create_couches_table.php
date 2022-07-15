@@ -22,20 +22,23 @@ return new class extends Migration
             $table->string('schema_table_name')->nullable();
             $table->string('remplir_color')->default('#808080');
             $table->string('contour_color')->default('#808080');
-
             $table->string('service_carto')->nullable();
-
             $table->string('identifiant')->nullable();
-
-
             $table->string('wms_type')->nullable();
-
             $table->string('logo')->nullable();
-
-            $table->string('sql')->nullable();
+            $table->text('sql')->nullable();
             $table->string('condition')->nullable();
             $table->boolean('mode_sql')->default(false);
             $table->string('sql_complete')->nullable();
+            $table->string('opacite')->nullable();
+            $table->string('qgis_url')->nullable();
+            $table->string('bbox')->nullable();
+            $table->string('projection')->nullable();
+            $table->integer('number_features')->default(0);
+            $table->integer('vues')->default(0);
+            $table->string('surface')->nullable();
+            $table->string('distance')->nullable();
+            $table->integer('telechargement')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

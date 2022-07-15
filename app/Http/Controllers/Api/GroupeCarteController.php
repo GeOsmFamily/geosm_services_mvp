@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\GroupeCarte;
-use App\Models\Instance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +36,6 @@ class GroupeCarteController extends BaseController
      * @authenticated
      * @header Content-Type application/json
      * @bodyParam nom string required the group carte name. Example: Groupe 1
-     * @bodyParam instance_id int the group carte instance id. Example: 1
      */
     public function store(Request $request)
     {
@@ -61,13 +59,6 @@ class GroupeCarteController extends BaseController
 
                 $groupe = GroupeCarte::create($input);
 
-                if ($input['instance_id']) {
-                    $instance = Instance::find($input['instance_id']);
-                    $instance->groupesCartes()->attach($groupe->id);
-                }
-
-
-
                 DB::commit();
 
                 $success['groupe_carte'] = $groupe;
@@ -88,10 +79,6 @@ class GroupeCarteController extends BaseController
     public function show($id)
     {
         $groupe = GroupeCarte::find($id);
-
-        if (!$groupe) {
-            return $this->sendError('Groupe carte introuvable.');
-        }
 
         $groupe->cartes = $groupe->cartes()->get();
 
@@ -115,10 +102,6 @@ class GroupeCarteController extends BaseController
             return $this->sendError('Vous n\'avez pas les droits pour effectuer cette action.');
         } else {
             $groupe = GroupeCarte::find($id);
-
-            if (!$groupe) {
-                return $this->sendError('Groupe carte introuvable.');
-            }
 
             $validator =  Validator::make($request->all(), [
                 'nom' => 'string|max:255',
@@ -163,14 +146,8 @@ class GroupeCarteController extends BaseController
         } else {
             $groupe = GroupeCarte::find($id);
 
-            if (!$groupe) {
-                return $this->sendError('Groupe carte introuvable.');
-            }
-
             try {
                 DB::beginTransaction();
-
-                $groupe->instances()->detach();
 
                 $groupe->cartes()->delete();
 

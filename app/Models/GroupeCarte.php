@@ -42,9 +42,4 @@ class GroupeCarte extends Model
     {
         return $this->hasMany(Carte::class);
     }
-
-    public function instances()
-    {
-        return $this->belongsToMany(Instance::class, 'groupe_carte_instances', 'groupe_carte_id', 'instance_id');
-    }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Instance;
 use App\Models\SousThematique;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +39,6 @@ class SousThematiqueController extends BaseController
      * @bodyParam nom string required the sous-thematique name. Example: Sous-thematique 1
      * @bodyParam nom_en string required the sous-thematique name in english. Example: Sous-thematique 1
      * @bodyParam image_src file the sous-thematique image.
-     * @bodyParam instance_id int required the instance id. Example: 1
      */
     public function store(Request $request)
     {
@@ -54,7 +52,6 @@ class SousThematiqueController extends BaseController
                 'nom' => 'required|string|max:255',
                 'nom_en' => 'required|string|max:255',
                 'image_src' => 'mimes:png,jpg,jpeg|max:20000',
-                'instance_id' => 'required|integer',
             ]);
 
             if ($validator->fails()) {
@@ -73,14 +70,6 @@ class SousThematiqueController extends BaseController
                 DB::beginTransaction();
 
                 $sousThematique = SousThematique::create($input);
-
-                if ($input['instance_id']) {
-                    $instance = Instance::find($input['instance_id']);
-
-                    $instance->sousThematiques()->attach($sousThematique->id);
-                }
-
-
 
                 DB::commit();
 
@@ -102,10 +91,6 @@ class SousThematiqueController extends BaseController
     public function show($id)
     {
         $sousThematique = SousThematique::find($id);
-
-        if (!$sousThematique) {
-            return $this->sendError('Sous-thematique introuvable.');
-        }
 
         $sousThematique->thematique = $sousThematique->thematique()->get();
 
@@ -140,18 +125,13 @@ class SousThematiqueController extends BaseController
                 return $this->sendError('Erreur de validation.', $validator->errors());
             }
 
-
-
-
             try {
                 DB::beginTransaction();
 
                 $sousThematique = SousThematique::find($id);
-                if (!$sousThematique) {
-                    return $this->sendError('Sous-thematique introuvable.');
-                }
-                $sousThematique->nom = $input['nom'] ?? $sousThematique->nom;
-                $sousThematique->nom_en = $input['nom_en'] ?? $sousThematique->nom_en;
+
+                $sousThematique->nom = $request->nom ?? $sousThematique->nom;
+                $sousThematique->nom_en = $request->nom_en ?? $sousThematique->nom_en;
 
                 if ($request->file()) {
                     $fileName = time() . '_' . $request->image_src->getClientOriginalName();
@@ -188,22 +168,15 @@ class SousThematiqueController extends BaseController
         } else {
             $sousThematique = SousThematique::find($id);
 
-            if (!$sousThematique) {
-                return $this->sendError('Sous-thematique introuvable.');
-            }
 
             try {
                 DB::beginTransaction();
-
-                $sousThematique->instances()->detach();
 
                 foreach ($sousThematique->couches as $couche) {
                     $thematique = $sousThematique->thematique;
                     $table = $thematique->schema . '."' . $couche->schema_table_name . '"';
 
                     DB::select('DROP TABLE ' . $table);
-
-                    $couche->instances()->detach();
 
                     $couche->delete();
                 }

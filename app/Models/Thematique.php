@@ -23,9 +23,4 @@ class Thematique extends Model
     {
         return $this->hasMany(SousThematique::class);
     }
-
-    public function instances()
-    {
-        return $this->belongsToMany(Instance::class, 'thematique_instances', 'thematique_id', 'instance_id');
-    }
 }

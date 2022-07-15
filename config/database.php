@@ -78,21 +78,6 @@ return [
             'sslmode' => 'prefer',
         ],
 
-        'pgsql_osm' => [
-            'driver' => 'pgsql',
-            'url' => env('DATABASE_URL_OSM'),
-            'host' => env('DB_HOST_OSM', '127.0.0.1'),
-            'port' => env('DB_PORT_OSM', '5432'),
-            'database' => env('DB_DATABASE_OSM', 'forge'),
-            'username' => env('DB_USERNAME_OSM', 'forge'),
-            'password' => env('DB_PASSWORD_OSM', ''),
-            'charset' => 'utf8',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'search_path' => 'public',
-            'sslmode' => 'prefer',
-        ],
-
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),

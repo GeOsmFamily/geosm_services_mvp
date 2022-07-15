@@ -52,9 +52,7 @@ class RoleController extends BaseController
     public function show($id)
     {
         $role = Role::find($id);
-        if (is_null($role)) {
-            return $this->sendError('Role not found.');
-        }
+
         $role->permissions = $role->permissions->pluck('name');
         $success['role'] = $role;
         return $this->sendResponse($success, 'Role retrieved successfully.');
@@ -77,9 +75,7 @@ class RoleController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
         $role = Role::find($id);
-        if (is_null($role)) {
-            return $this->sendError('Role not found.');
-        }
+
         $role->name = $input['name'];
         $role->save();
         $success['role'] = $role;
@@ -95,9 +91,7 @@ class RoleController extends BaseController
     public function destroy($id)
     {
         $role = Role::find($id);
-        if (is_null($role)) {
-            return $this->sendError('Role not found.');
-        }
+
         $role->delete();
         $success['role'] = $role;
         return $this->sendResponse($success, 'Role deleted successfully.');

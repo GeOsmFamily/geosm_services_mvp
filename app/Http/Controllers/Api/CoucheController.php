@@ -3,16 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Couche;
-use App\Models\CoucheInstance;
 use App\Models\Instance;
 use App\Models\SousThematique;
-use App\Models\SousThematiqueInstance;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -46,8 +44,8 @@ class CoucheController extends BaseController
      * @authenticated
      * @header Content-Type application/json
      * @bodyParam sous_thematique_id int required the couche sous thematique id. Example: 1
-     * @bodyParam nom string required the couche name. Example: Couche 1
-     * @bodyParam nom_en string required the couche name in english. Example: Couche 1
+     * @bodyParam nom string required the couche name. Example: Couche
+     * @bodyParam nom_en string required the couche name in english. Example: Couche
      * @bodyParam geometry string the couche geometry. Example: point
      * @bodyParam remplir_color string the couche fill color. Example: #000000
      * @bodyParam contour_color string the couche contour color. Example: #000000
@@ -59,7 +57,6 @@ class CoucheController extends BaseController
      * @bodyParam condition string the couche tag. Example: OR
      * @bodyParam mode_sql bool the couche mode sql. Example: false
      * @bodyParam sql_complete string the couche sql complete. Example: 10
-     * @bodyParam instance_id int required the couche instance id. Example: 1
      * @bodyParam data_src file the couche data source(geojson,kml,gpkg,shp).
      * @bodyParam data_qml file the couche data qml.
      * @bodyParam key string the osm key for the couche. Example: amenity
@@ -86,7 +83,6 @@ class CoucheController extends BaseController
                 'wms_type' => 'string',
                 'logo' => 'file',
                 'condition' => 'string',
-                'instance_id' => 'required|integer',
                 'data_src' => 'file',
                 'data_qml' => 'file',
                 'key' => 'string',
@@ -106,11 +102,25 @@ class CoucheController extends BaseController
 
             $input['identifiant'] = strtolower(preg_replace('/[^A-Za-z0-9]/', '', $input['nom']));
 
+            $instance = Instance::find(1);
+
 
             if ($request->file('logo')) {
                 $fileName = time() . '_' . $request->logo->getClientOriginalName();
-                $filePath = $request->file('logo')->storeAs('uploads/couches/logos/' . $request->nom, $fileName, 'public');
+                $filePath = $request->file('logo')->storeAs('uploads/couches/logos/' . $instance->nom . '/' . $request->nom, $fileName, 'public');
                 $input['logo'] = '/storage/' . $filePath;
+            }
+
+            if ($request->file('data_src')) {
+                $fileName = time() . '_' . $request->data_src->getClientOriginalName();
+                $filePath = $request->file('data_src')->storeAs('uploads/couches/datas/' . $instance->nom . '/' . $request->nom, $fileName, 'public');
+                $data_src = '/storage/' . $filePath;
+            }
+
+            if ($request->file('data_qml')) {
+                $fileName = time() . '_' . $request->data_qml->getClientOriginalName();
+                $filePath = $request->file('data_qml')->storeAs('uploads/couches/qml/' . $instance->nom . '/' . $request->nom, $fileName, 'public');
+                $data_qml = '/storage/' . $filePath;
             }
 
             try {
@@ -119,10 +129,9 @@ class CoucheController extends BaseController
                 $couche = Couche::create($input);
 
 
-                DB::connection('pgsql_osm')->select(' CREATE TABLE ' . $sousThematique->thematique->schema . '.' . $input['schema_table_name'] . ' ()with(OIDS=FALSE)');
-
-
                 if ($request->wms_type == 'osm') {
+
+                    DB::select(' CREATE TABLE ' . $sousThematique->thematique->schema . '.' . $input['schema_table_name'] . ' ()with(OIDS=FALSE)');
                     Tag::create([
                         'couche_id' => $couche->id,
                         'key' => $request->key,
@@ -131,77 +140,174 @@ class CoucheController extends BaseController
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now(),
                     ]);
-                    $result =  $this->generateSqlForLayer($couche, $input['instance_id'], env('INTERSECTION'));
+                    $result =  $this->generateSqlForLayer($couche, 1, env('INTERSECTION'));
 
-                    if ($result['status'] == false) {
+                    if (!$result['status']) {
 
                         return $this->sendError('Erreur lors de la création de la couche.', $result, 400);
                     }
 
-                    // requete ogr2ogr pour generer le gpkg
-
-                    $gpkg_path = $this->createGpkgFromDatabase($couche, $result['sql']);
-
-                    $instance = Instance::find($input['instance_id']);
 
                     $qgis_project_name = $instance->nom . $sousThematique->thematique->id;
 
-                    //requete python pour ajouter les datas au projet qgis
+                    if ($request->file('data_qml')) {
+                        $response = Http::timeout(500)->post(env('CARTO_URL') . '/creategpkg', [
+                            'sql' => $result['sql'],
+                            'instance' => $instance->nom,
+                            'couche_name' => $couche->nom,
+                            'couche_id'  => $couche->id,
+                            'qgis_project_name' => $qgis_project_name,
+                            'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
+                            'geometry' => $couche->geometry,
+                            'identifiant' =>  $couche->identifiant,
+                            'path_qml' => env('APP_URL') . $data_qml,
+                        ]);
 
-                    if ($couche->geometry == 'point') {
-                        $command = escapeshellcmd('python3 carto_scripts/add_layer.py ' . $qgis_project_name . ' ' . env('PATH_QGIS') . ' ' . $gpkg_path . ' ' . $couche->geometry . ' ' . $couche->identifiant . ' ' . $request->file('logo') . ' ' . $couche->remplir_color);
+
+                        if ($response->successful()) {
+                            $status = $response->json("status");
+                            $layer = $response->json("layer");
+                            if ($status) {
+                                $path_project = str_replace('/var/www/html/src/qgis/', '', $layer['path_project']);
+
+                                $qgis_url = env('URL_QGIS') . $path_project;
+                                $bbox = $layer['bbox'];
+                                $projection = $layer['scr'];
+                                $features = $layer['features'];
+
+                                $couche->sql = $result['sql'];
+                                $couche->qgis_url = $qgis_url;
+                                $couche->bbox = $bbox;
+                                $couche->projection = $projection;
+                                $couche->number_features = $features;
+                                $couche->distance = $result['distance'];
+                                $couche->surface = $result['surface'];
+                                $couche->save();
+                            } else {
+                                return $this->sendError('Erreur lors de la création de la couche.', $response->body(), 400);
+                            }
+                        } else {
+                            return $this->sendError('Erreur lors de la création de la couche.', "Request Failed", 400);
+                        }
                     } else {
-                        $command = escapeshellcmd('python3 carto_scripts/add_layer.py ' . $qgis_project_name . ' ' . env('PATH_QGIS') . ' ' . $gpkg_path . ' ' . $couche->geometry . ' ' . $couche->identifiant . ' ' . $request->file('data_qml'));
+                        $response = Http::timeout(500)->post(env('CARTO_URL') . '/creategpkg', [
+                            'sql' => $result['sql'],
+                            'instance' => $instance->nom,
+                            'couche_name' => $couche->nom,
+                            'couche_id'  => $couche->id,
+                            'qgis_project_name' => $qgis_project_name,
+                            'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
+                            'geometry' => $couche->geometry,
+                            'identifiant' =>  $couche->identifiant,
+                            'path_logo' => env('APP_URL') . $couche->logo,
+                            'color' => $couche->remplir_color
+                        ]);
+
+                        if ($response->successful()) {
+                            $status = $response->json("status");
+                            $layer = $response->json("layer");
+                            if ($status) {
+                                $path_project = str_replace('/var/www/html/src/qgis/', '', $layer['path_project']);
+
+                                $qgis_url = env('URL_QGIS') . $path_project;
+                                $bbox = $layer['bbox'];
+                                $projection = $layer['scr'];
+                                $features = $layer['features'];
+
+                                $couche->sql = $result['sql'];
+                                $couche->qgis_url = $qgis_url;
+                                $couche->bbox = $bbox;
+                                $couche->projection = $projection;
+                                $couche->number_features = $features;
+                                $couche->distance = $result['distance'];
+                                $couche->surface = $result['surface'];
+                                $couche->save();
+                            } else {
+                                return $this->sendError('Erreur lors de la création de la couche.', $response->body(), 400);
+                            }
+                        } else {
+                            return $this->sendError('Erreur lors de la création de la couche.', "Request Failed", 400);
+                        }
                     }
-
-                    $output = shell_exec($command);
-                    $arr = json_decode($output, true);
-
-                    $qgis_url = env('URL_QGIS') . $arr['chemin_projet'];
-                    $bbox = $arr['BBOX'];
-                    $projection = $arr['scr'];
-                    $features = $arr['features'];
-
-                    $instance = Instance::find($input['instance_id']);
-                    $instance->couches()->attach($couche->id, ['opacite' => $request->opacite ?? null, 'qgis_url' => $qgis_url ?? null, 'bbox' => $bbox ?? null, 'projection' => $projection ?? null,  'number_features' => $features, 'surface' => $result['surface'], 'distance' => $result['distance']]);
                 } else {
 
-                    //requete python pour ajouter les datas au projet qgis
-                    $file_data = $request->file('data_src');
-                    $file_data_qml = $request->file('data_qml');
-
-
-                    $instance = Instance::find($input['instance_id']);
-
                     $qgis_project_name = $instance->nom . $sousThematique->thematique->id;
 
-                    //requete python pour ajouter les datas au projet qgis
+                    if ($request->file('data_qml')) {
+                        $response = Http::timeout(500)->post(env('CARTO_URL') . '/addotherlayer', [
+                            'qgis_project_name' => $qgis_project_name,
+                            'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
+                            'path_data' => env('APP_URL') . $data_src,
+                            'geometry' => $couche->geometry,
+                            'identifiant' =>  $couche->identifiant,
+                            'path_qml' => env('APP_URL') . $data_qml,
+                        ]);
 
-                    if ($couche->geometry == 'point') {
-                        $command = escapeshellcmd('python3 carto_scripts/add_layer.py ' . $qgis_project_name . ' ' . env('PATH_QGIS') . ' ' . $file_data . ' ' . $couche->geometry . ' ' . $couche->identifiant . ' ' . $request->file('logo') . ' ' . $couche->remplir_color);
+
+                        if ($response->successful()) {
+                            $status = $response->json("status");
+                            $layer = $response->json("layer");
+                            if ($status) {
+                                $path_project = str_replace('/var/www/html/src/qgis/', '', $layer['path_project']);
+
+                                $qgis_url = env('URL_QGIS') . $path_project;
+                                $bbox = $layer['bbox'];
+                                $projection = $layer['scr'];
+                                $features = $layer['features'];
+
+                                $couche->qgis_url = $qgis_url;
+                                $couche->bbox = $bbox;
+                                $couche->projection = $projection;
+                                $couche->number_features = $features;
+                                $couche->save();
+                            } else {
+                                return $this->sendError('Erreur lors de la création de la couche.', $response->json("message"), 400);
+                            }
+                        } else {
+                            return $this->sendError('Erreur lors de la création de la couche.', "Request Failed", 400);
+                        }
                     } else {
-                        $command = escapeshellcmd('python3 carto_scripts/add_layer.py ' . $qgis_project_name . ' ' . env('PATH_QGIS') . ' ' . $file_data . ' ' . $couche->geometry . ' ' . $couche->identifiant . ' ' . $file_data_qml);
+                        $response = Http::timeout(500)->post(env('CARTO_URL') . '/creategpkg', [
+
+                            'qgis_project_name' => $qgis_project_name,
+                            'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
+                            'path_data' => env('APP_URL') . $data_src,
+                            'geometry' => $couche->geometry,
+                            'identifiant' =>  $couche->identifiant,
+                            'path_logo' => env('APP_URL') . $couche->logo,
+                            'color' => $couche->remplir_color
+                        ]);
+
+                        if ($response->successful()) {
+                            $status = $response->json("status");
+                            $layer = $response->json("layer");
+                            if ($status) {
+                                $path_project = str_replace('/var/www/html/src/qgis/', '', $layer['path_project']);
+
+                                $qgis_url = env('URL_QGIS') . $path_project;
+                                $bbox = $layer['bbox'];
+                                $projection = $layer['scr'];
+                                $features = $layer['features'];
+
+                                $couche->qgis_url = $qgis_url;
+                                $couche->bbox = $bbox;
+                                $couche->projection = $projection;
+                                $couche->number_features = $features;
+                                $couche->save();
+                            } else {
+                                return $this->sendError('Erreur lors de la création de la couche.', $response->json("message"), 400);
+                            }
+                        } else {
+                            return $this->sendError('Erreur lors de la création de la couche.', "Request Failed", 400);
+                        }
                     }
-
-                    $output = shell_exec($command);
-                    $arr = json_decode($output, true);
-
-                    $qgis_url = env('URL_QGIS') . $arr['chemin_projet'];
-                    $bbox = $arr['BBOX'];
-                    $projection = $arr['scr'];
-                    $features = $arr['features'];
-
-                    $instance = Instance::find($input['instance_id']);
-                    $instance->couches()->attach($couche->id, ['opacite' => $request->opacite ?? null, 'qgis_url' => $qgis_url ?? null, 'bbox' => $bbox ?? null, 'projection' => $projection ?? null,  'number_features' => $features]);
                 }
 
                 DB::commit();
-
                 $success['couche'] = $couche;
                 return $this->sendResponse($success, 'Couche créée avec succès.', 201);
             } catch (\Throwable $th) {
                 DB::rollback();
-                DB::connection('pgsql_osm')->rollBack();
                 return $this->sendError('Erreur lors de la création de la couche.', $th->getMessage(), 400);
             }
         }
@@ -216,10 +322,6 @@ class CoucheController extends BaseController
     public function show($id)
     {
         $couche = Couche::find($id);
-
-        if (is_null($couche)) {
-            return $this->sendError('Couche non trouvée.', 404);
-        }
 
         $couche->sousThematique = $couche->sousThematique()->get();
         foreach ($couche->sousThematique as $sousThematique) {
@@ -236,8 +338,8 @@ class CoucheController extends BaseController
      * @authenticated
      * @header Content-Type application/json
      * @urlParam id required The couche id. Example: 1
-     * @bodyParam nom string the couche name. Example: Couche 1
-     * @bodyParam nom_en string the couche name in english. Example: Couche 1
+     * @bodyParam nom string the couche name. Example: Couche1
+     * @bodyParam nom_en string the couche name in english. Example: Couche1
      * @bodyParam geometry string the couche geometry. Example: Polygon
      * @bodyParam remplir_color string the couche fill color. Example: #000000
      * @bodyParam contour_color string the couche contour color. Example: #000000
@@ -256,7 +358,6 @@ class CoucheController extends BaseController
      * @bodyParam condition string the couche tag. Example: 10
      * @bodyParam mode_sql bool the couche mode sql. Example: true
      * @bodyParam sql_complete string the couche sql complete. Example: 10
-     * @bodyParam instance_id int the couche instance id
      * @bodyParam vues bool the couche view count. Example: true
      * @bodyParam telechargement bool the couche download count. Example: true
      */
@@ -269,15 +370,11 @@ class CoucheController extends BaseController
         } else {
             $couche = Couche::find($id);
 
-            if (is_null($couche)) {
-                return $this->sendError('Couche non trouvée.', 404);
-            }
-
             $input = $request->all();
 
             $validator = Validator::make($input, [
-                'nom' => 'required',
-                'nom_en' => 'required',
+                'nom' => 'string',
+                'nom_en' => 'string',
                 'geometry' => 'string',
                 'remplir_color' => 'string',
                 'contour_color' => 'string',
@@ -296,21 +393,12 @@ class CoucheController extends BaseController
                 'condition' => 'string',
                 'mode_sql' => 'string',
                 'sql_complete' => 'string',
-                'instance_id' => 'integer',
                 'vues' => 'boolean',
                 'telechargement' => 'boolean',
             ]);
 
             if ($validator->fails()) {
                 return $this->sendError('Erreur de validation.', $validator->errors());
-            }
-
-
-
-            if ($request->file('logo')) {
-                $fileName = time() . '_' . $request->logo->getClientOriginalName();
-                $filePath = $request->file('logo')->storeAs('uploads/couches/logos/' . $request->nom, $fileName, 'public');
-                $input['logo'] = '/storage/' . $filePath;
             }
 
             try {
@@ -331,26 +419,23 @@ class CoucheController extends BaseController
                 $couche->condition = $input['condition'] ?? $couche->condition;
                 $couche->mode_sql = $input['mode_sql'] ?? $couche->mode_sql;
                 $couche->sql_complete = $input['sql_complete'] ?? $couche->sql_complete;
-                $couche->instance_id = $input['instance_id'] ?? $couche->instance_id;
+                $couche->opacite = $input['opacite'] ?? $couche->opacite;
+                $couche->qgis_url = $input['qgis_url'] ?? $couche->qgis_url;
+                $couche->bbox = $input['bbox'] ?? $couche->bbox;
+                $couche->projection = $input['projection'] ?? $couche->projection;
+                $couche->number_features = $input['number_features'] ?? $couche->number_features;
+                $couche->surface = $input['surface'] ?? $couche->surface;
+                $couche->distance = $input['distance'] ?? $couche->distance;
 
                 $couche->save();
 
-                $coucheInstance = CoucheInstance::where('couche_id', $couche->id)->where('instance_id', $input['instance_id'])->first();
 
-                $coucheInstance->opacite = $input['opacite'] ?? $coucheInstance->opacite;
-                $coucheInstance->qgis_url = $input['qgis_url'] ?? $coucheInstance->qgis_url;
-                $coucheInstance->bbox = $input['bbox'] ?? $coucheInstance->bbox;
-                $coucheInstance->projection = $input['projection'] ?? $coucheInstance->projection;
-                $coucheInstance->number_features = $input['number_features'] ?? $coucheInstance->number_features;
-                $coucheInstance->surface = $input['surface'] ?? $coucheInstance->surface;
-                $coucheInstance->distance = $input['distance'] ?? $coucheInstance->distance;
                 if ($input['vues']) {
-                    $coucheInstance->vues = $coucheInstance->vues + 1;
+                    $couche->vues = $couche->vues + 1;
                 }
                 if ($input['telechargement']) {
-                    $coucheInstance->telechargement = $coucheInstance->telechargement + 1;
+                    $couche->telechargement = $couche->telechargement + 1;
                 }
-                $coucheInstance->save();
 
                 DB::commit();
 
@@ -380,10 +465,6 @@ class CoucheController extends BaseController
         } else {
             $couche = Couche::find($id);
 
-            if (is_null($couche)) {
-                return $this->sendError('Couche non trouvée.', 404);
-            }
-
             try {
                 DB::beginTransaction();
 
@@ -391,9 +472,7 @@ class CoucheController extends BaseController
                 $thematique = $sousThematique->thematique;
                 $table = $thematique->schema . '."' . $couche->schema_table_name . '"';
 
-                DB::connection('pgsql_osm')->select('DROP TABLE ' . $table);
-
-                $couche->instances()->detach();
+                DB::select('DROP TABLE ' . $table);
 
                 $couche->tags()->delete();
 
@@ -405,7 +484,6 @@ class CoucheController extends BaseController
                 return $this->sendResponse($success, 'Couche supprimée avec succès.', 201);
             } catch (\Throwable $th) {
                 DB::rollback();
-                DB::connection('pgsql_osm')->rollBack();
                 return $this->sendError('Erreur lors de la suppression de la couche.', $th->getMessage(), 400);
             }
         }
@@ -445,18 +523,18 @@ class CoucheController extends BaseController
                 }
             } else if ($geometry_type == 'polygon') {
                 if ($intersection) {
-                    $surface = DB::connection('pgsql_osm')->select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A ,' . $instance . ' as B where  (B.id = ' . $instance_id . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.' . $geomColum . '::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
+                    $surface = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A ,' . $instance . ' as B where  (B.id = ' . $instance_id . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.' . $geomColum . '::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
                     $sql = 'select ' . $select . ', ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A ,' . $instance . ' as B where  (B.id = ' . $instance_id . ' and (ST_Contains ( ST_TRANSFORM(ST_Buffer(B.' . $geomColum . '::geography,10)::geometry,4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )';
                 } else {
-                    $surface = DB::connection('pgsql_osm')->select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A , $instance  as B where  B.id =  $instance_id  AND  $where");
+                    $surface = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt,sum(A.way_area)/1000000 as surface from planet_osm_polygon  as A , $instance  as B where  B.id =  $instance_id  AND  $where");
                     $sql = "select " . $select . ", ST_TRANSFORM(A.way,4326) as geometry from planet_osm_polygon  as A , $instance  as B where  B.id =  $instance_id  AND  $where";
                 }
             } else if ($geometry_type == 'linestring') {
                 if ($intersection) {
-                    $distance = DB::connection('pgsql_osm')->select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A ,' . $instance . ' as B where  (B.id = ' . $instance_id . ' and (ST_Intersects ( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
+                    $distance = DB::select('select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A ,' . $instance . ' as B where  (B.id = ' . $instance_id . ' and (ST_Intersects ( ST_TRANSFORM(B.' . $geomColum . ',4326), ST_TRANSFORM(A.way,4326) ))) AND ( ' . $where . ' )');
                     $sql = 'select ' . $select . ',ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,' . $instance . ' as B where (B.id = ' . $instance_id . ' and (ST_Intersects( ST_TRANSFORM(A.way,4326), ST_TRANSFORM(B.' . $geomColum . ',4326) ))) AND ( ' . $where . ' ) ';
                 } else {
-                    $distance = DB::connection('pgsql_osm')->select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A , $instance  as B where  B.id =  $instance_id  AND  $where");
+                    $distance = DB::select("select count(*) as count, sum(ST_NPoints(A.way)) AS nbre_pt, sum(ST_length( geography(ST_TRANSFORM(A.way,4326)) )) / 1000 as distance from planet_osm_line  as A , $instance  as B where  B.id =  $instance_id  AND  $where");
                     $sql = "select " . $select . ",ST_TRANSFORM(A.way,4326) as geometry from planet_osm_line as A ,  $instance  as B where B.id =  $instance_id  AND  $where";
                 }
             }
@@ -541,35 +619,21 @@ class CoucheController extends BaseController
     public function createOsmTable($schema, $table, $sql)
     {
         try {
-            DB::connection('pgsql_osm')->beginTransaction();
+            DB::beginTransaction();
 
-            DB::connection('pgsql_osm')->select("CREATE SCHEMA IF NOT EXISTS $schema");
-            DB::connection('pgsql_osm')->select('DROP TABLE IF EXISTS ' . $schema . '."' . $table . '"');
-            DB::connection('pgsql_osm')->select('CREATE TABLE IF NOT EXISTS ' . $schema . '."' . $table . '"' . ' AS ' . $sql);
+            DB::select("CREATE SCHEMA IF NOT EXISTS $schema");
+            DB::select('DROP TABLE IF EXISTS ' . $schema . '."' . $table . '"');
+            DB::select('CREATE TABLE IF NOT EXISTS ' . $schema . '."' . $table . '"' . ' AS ' . $sql);
 
-            DB::connection('pgsql_osm')->select('ALTER TABLE ' . $schema . '."' . $table . '"' . ' RENAME COLUMN geometry TO geom');
-            DB::connection('pgsql_osm')->select('CREATE INDEX ' . $table . '_geometry_idx ON ' . $schema . '."' . $table . '"' . '   USING GIST(geom)');
+            DB::select('ALTER TABLE ' . $schema . '."' . $table . '"' . ' RENAME COLUMN geometry TO geom');
+            DB::select('CREATE INDEX ' . $table . '_geometry_idx ON ' . $schema . '."' . $table . '"' . '   USING GIST(geom)');
 
-            DB::connection('pgsql_osm')->commit();
+            DB::commit();
 
             return true;
         } catch (\Throwable $th) {
-            DB::connection('pgsql_osm')->rollBack();
+            DB::rollBack();
             return false;
         }
-    }
-
-    // execute ogr2ogr to create gpkg from database data and return the path of the gpkg
-    public function createGpkgFromDatabase($couche, $sql)
-    {
-        $DB_HOST_OSM = env('DB_HOST_OSM');
-        $DB_PORT_OSM = env('DB_PORT_OSM');
-        $DB_USER_OSM = env('DB_USERNAME_OSM');
-        $DB_PASSWORD_OSM = env('DB_PASSWORD_OSM');
-        $DB_NAME_OSM = env('DB_DATABASE_OSM');
-
-        $command = "ogr2ogr -f 'GPKG' -t_srs EPSG:4326 -sql '$sql' -overwrite '" . public_path() . "/gpkg/" . $couche->nom . '.gpkg' . "' 'PG:host=$DB_HOST_OSM port=$DB_PORT_OSM user=$DB_USER_OSM password=$DB_PASSWORD_OSM dbname=$DB_NAME_OSM'";
-        $output = shell_exec($command);
-        return public_path() . "/gpkg/" . $couche->nom . '.gpkg';
     }
 }

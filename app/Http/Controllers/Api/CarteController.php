@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Carte;
-use App\Models\Instance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -47,7 +46,6 @@ class CarteController extends BaseController
      * @bodyParam zmax int the carte zmax. Example: 10
      * @bodyParam zmin int the carte zmin. Example: 1
      * @bodyParam commentaire string the carte commentaire. Example: Carte 1
-     * @bodyParam instance_id int the carte instance id. Example: 1
      */
     public function store(Request $request)
     {
@@ -87,13 +85,6 @@ class CarteController extends BaseController
 
                 $carte = Carte::create($input);
 
-                if ($request->instance_id) {
-                    $instance = Instance::find($request->instance_id);
-
-                    $instance->cartes()->attach($carte->id);
-                }
-
-
                 DB::commit();
 
                 $success['carte'] = $carte;
@@ -115,9 +106,6 @@ class CarteController extends BaseController
     public function show($id)
     {
         $carte = Carte::find($id);
-        if (is_null($carte)) {
-            return $this->sendError('Carte non trouvée.');
-        }
         $carte->groupeCarte = $carte->groupeCarte()->get();
         $success['carte'] = $carte;
         return $this->sendResponse($success, 'Carte récupérée avec succès.');
@@ -165,9 +153,6 @@ class CarteController extends BaseController
             }
 
             $carte = Carte::find($id);
-            if (is_null($carte)) {
-                return $this->sendError('Carte non trouvée.');
-            }
 
             $input = $request->all();
 
@@ -219,9 +204,7 @@ class CarteController extends BaseController
             return $this->sendError('Vous n\'avez pas les droits pour effectuer cette action.');
         } else {
             $carte = Carte::find($id);
-            if (is_null($carte)) {
-                return $this->sendError('Carte non trouvée.');
-            }
+
             try {
                 DB::beginTransaction();
 

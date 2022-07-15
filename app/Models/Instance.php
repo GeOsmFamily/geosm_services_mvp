@@ -26,28 +26,10 @@ class Instance extends Model
         'app_twitter',
     ];
 
-    public function groupesCartes()
-    {
-        return $this->belongsToMany(GroupeCarte::class, 'groupe_carte_instances', 'instance_id', 'group_carte_id');
-    }
-
-    public function couches()
-    {
-        return $this->belongsToMany(Couche::class, 'couche_instances', 'instance_id', 'couche_id');
-    }
-
-    public function thematiques()
-    {
-        return $this->belongsToMany(Thematique::class, 'thematique_instances', 'instance_id', 'thematique_id');
-    }
-
-    public function sousThematiques()
-    {
-        return $this->belongsToMany(SousThematique::class, 'sous_thematique_instances', 'instance_id', 'sous_thematique_id');
-    }
-
-    public function cartes()
-    {
-        return $this->belongsToMany(Carte::class, 'carte_instances', 'instance_id', 'carte_id');
-    }
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'geom'
+    ];
 }

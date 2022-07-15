@@ -16,18 +16,18 @@ class InstanceTableSeeders extends Seeder
     public function run()
     {
         DB::table('instances')->insert([
-            'nom' => 'cameroun',
+            'nom' => env('INSTANCE_NAME'),
             'mapillary' => true,
             'comparator' => true,
-            'altimetrie' => true,
+            'altimetrie' => false,
             'download' => true,
             'routing' => true,
             'app_version' => '1.5.0',
-            'app_github_url' => '',
-            'app_email' => '',
-            'app_whatsapp' => '',
-            'app_facebook' => '',
-            'app_twitter' => '',
+            'app_github_url' => 'https://github.com/GeOsmFamily',
+            'app_email' => 'infos@geo.sm',
+            'app_whatsapp' => '237 694 69 86 07',
+            'app_facebook' => 'https://www.facebook.com/GeOsm.Family/',
+            'app_twitter' => 'https://twitter.com/GeOsm_Family',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

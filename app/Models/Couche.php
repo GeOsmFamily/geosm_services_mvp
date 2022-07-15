@@ -18,31 +18,28 @@ class Couche extends Model
         'schema_table_name',
         'remplir_color',
         'contour_color',
-
         'service_carto',
-
         'identifiant',
-
         'wms_type',
-
         'logo',
-
         'sql',
         'condition',
         'mode_sql',
         'sql_complete',
-
-
+        'opacite',
+        'qgis_url',
+        'bbox',
+        'projection',
+        'number_features',
+        'vues',
+        'surface',
+        'distance',
+        'telechargement',
     ];
 
     public function sousThematique()
     {
         return $this->belongsTo(SousThematique::class);
-    }
-
-    public function instances()
-    {
-        return $this->belongsToMany(Instance::class, 'couche_instances', 'couche_id', 'instance_id');
     }
 
     public function tags()

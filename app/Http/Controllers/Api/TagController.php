@@ -127,9 +127,7 @@ class TagController extends BaseController
                 DB::beginTransaction();
 
                 $tag = Tag::find($id);
-                if (is_null($tag)) {
-                    return $this->sendError('Tag non trouvé.');
-                }
+
                 $tag->key = $input['key'] ?? $tag->key;
                 $tag->value = $input['value'] ?? $tag->value;
                 $tag->operateur = $input['operateur'] ?? $tag->operateur;
@@ -163,9 +161,7 @@ class TagController extends BaseController
             return $this->sendError('Vous n\'avez pas les droits pour effectuer cette action.');
         } else {
             $tag = Tag::find($id);
-            if (is_null($tag)) {
-                return $this->sendError('Tag non trouvé.');
-            }
+
             $tag->delete();
             return $this->sendResponse($tag, 'Tag supprimé avec succès.');
         }

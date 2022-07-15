@@ -55,6 +55,10 @@ Route::middleware('auth.apikey')->group(
         Route::get('tags', [App\Http\Controllers\Api\TagController::class, 'index']);
         Route::get('tags/{id}', [App\Http\Controllers\Api\TagController::class, 'show']);
 
+        //Instance
+        Route::get('instances', [App\Http\Controllers\Api\InstanceController::class, 'index']);
+        Route::get('instances/{id}', [App\Http\Controllers\Api\InstanceController::class, 'show']);
+
 
 
         Route::middleware('auth:api')->group(function () {
@@ -88,6 +92,9 @@ Route::middleware('auth.apikey')->group(
             Route::put('tags/{id}', [App\Http\Controllers\Api\TagController::class, 'update']);
             Route::delete('tags/{id}', [App\Http\Controllers\Api\TagController::class, 'destroy']);
 
+            Route::post('instances', [App\Http\Controllers\Api\InstanceController::class, 'store']);
+            Route::put('instances/{id}', [App\Http\Controllers\Api\InstanceController::class, 'update']);
+            Route::delete('instances/{id}', [App\Http\Controllers\Api\InstanceController::class, 'destroy']);
 
 
             Route::group(['middleware' => ['role:admin']], function () {

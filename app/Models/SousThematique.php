@@ -26,9 +26,4 @@ class SousThematique extends Model
     {
         return $this->hasMany(Couche::class);
     }
-
-    public function instances()
-    {
-        return $this->belongsToMany(Instance::class, 'sous_thematique_instances', 'sous_thematique_id', 'instance_id');
-    }
 }

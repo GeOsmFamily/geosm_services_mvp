@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Instance;
 use App\Models\Thematique;
-use App\Models\ThematiqueInstance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +27,7 @@ class ThematiqueController extends BaseController
         return $this->sendResponse($success, 'Thematiques récupérés avec succès.');
     }
 
+
     /**
      * Add a thematique.
      *
@@ -38,7 +37,6 @@ class ThematiqueController extends BaseController
      * @bodyParam nom_en string required the thematique name in english. Example: Thematique 1
      * @bodyParam image_src file the thematique image.
      * @bodyParam color string required the thematique color. Example: #808080
-     * @bodyParam instance_id int required the instance id. Example: 1
      */
     public function store(Request $request)
     {
@@ -52,7 +50,6 @@ class ThematiqueController extends BaseController
                 'nom_en' => 'required|string|max:255',
                 'image_src' => 'mimes:png,jpg,jpeg|max:20000',
                 'color' => 'required|string|max:255',
-                'instance_id' => 'required|integer',
             ]);
 
             if ($validator->fails()) {
@@ -70,19 +67,9 @@ class ThematiqueController extends BaseController
             if ($thematiques->count() > 0) {
                 $lastThematique = $thematiques->last();
                 $input['ordre'] = $lastThematique->ordre + 1;
-
-                if ($request->instance_id) {
-                    $lastThematiqueInstance = ThematiqueInstance::where('instance_id', $request->instance_id)->orderBy('ordre', 'desc')->first();
-                    if ($lastThematiqueInstance) {
-                        $input['ordre'] = $lastThematiqueInstance->ordre + 1;
-                    } else {
-                        $input['ordre'] = 1;
-                    }
-                }
             } else {
                 $input['ordre'] = 1;
             }
-
 
             if ($request->file()) {
                 $fileName = time() . '_' . $request->image_src->getClientOriginalName();
@@ -95,14 +82,7 @@ class ThematiqueController extends BaseController
 
                 $thematique = Thematique::create($input);
 
-                DB::connection('pgsql_osm')->select('CREATE SCHEMA ' . $schema . ';');
-
-                if ($input['instance_id']) {
-                    $instance = Instance::find($input['instance_id']);
-
-                    $instance->thematiques()->attach($thematique->id);
-                }
-
+                DB::select('CREATE SCHEMA ' . $schema . ';');
 
                 DB::commit();
 
@@ -110,7 +90,6 @@ class ThematiqueController extends BaseController
                 return $this->sendResponse($success, 'Thématique créée avec succès.', 201);
             } catch (\Throwable $th) {
                 DB::rollback();
-                DB::connection('pgsql_osm')->rollBack();
                 return $this->sendError('Erreur lors de la création de la thématique.', $th->getMessage(), 400);
             }
         }
@@ -125,10 +104,6 @@ class ThematiqueController extends BaseController
     public function show($id)
     {
         $thematique = Thematique::find($id);
-
-        if (is_null($thematique)) {
-            return $this->sendError('Thématique non trouvée.', 404);
-        }
 
         $success['thematique'] = $thematique;
         return $this->sendResponse($success, 'Thématique récupérée avec succès.');
@@ -170,10 +145,6 @@ class ThematiqueController extends BaseController
             $input = $request->all();
 
             $thematique = Thematique::find($id);
-
-            if (is_null($thematique)) {
-                return $this->sendError('Thématique non trouvée.', 404);
-            }
 
             if ($request->file()) {
                 $fileName = time() . '_' . $request->image_src->getClientOriginalName();
@@ -220,25 +191,18 @@ class ThematiqueController extends BaseController
         } else {
             $thematique = Thematique::find($id);
 
-            if (is_null($thematique)) {
-                return $this->sendError('Thématique non trouvée.', 404);
-            }
-
             try {
                 DB::beginTransaction();
 
-                $thematique->instances()->detach();
 
                 foreach ($thematique->sousThematiques as $sousThematique) {
-                    $sousThematique->instances()->detach();
+
 
                     foreach ($sousThematique->couches as $couche) {
                         $thematique = $sousThematique->thematique;
                         $table = $thematique->schema . '."' . $couche->schema_table_name . '"';
 
-                        DB::connection('pgsql_osm')->select('DROP TABLE ' . $table);
-
-                        $couche->instances()->detach();
+                        DB::select('DROP TABLE ' . $table);
 
                         $couche->delete();
                     }
@@ -247,10 +211,9 @@ class ThematiqueController extends BaseController
                 $thematique->sousThematiques()->delete();
 
 
-                DB::connection('pgsql_osm')->select('DROP SCHEMA ' . $thematique->schema . ' CASCADE');
+                DB::select('DROP SCHEMA ' . $thematique->schema . ' CASCADE');
 
                 $thematique->delete();
-
 
                 DB::commit();
 
@@ -259,7 +222,6 @@ class ThematiqueController extends BaseController
                 return $this->sendResponse($success, 'Thématique supprimée avec succès.', 201);
             } catch (\Throwable $th) {
                 DB::rollback();
-                DB::connection('pgsql_osm')->rollBack();
                 return $this->sendError('Erreur lors de la suppression de la thématique.', $th->getMessage(), 400);
             }
         }
