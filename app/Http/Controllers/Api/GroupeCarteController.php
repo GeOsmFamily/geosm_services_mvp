@@ -57,7 +57,7 @@ class GroupeCarteController extends BaseController
             try {
                 DB::beginTransaction();
 
-                $groupe = GroupeCarte::created($input);
+                $groupe = GroupeCarte::create($input);
 
                 DB::commit();
 
@@ -79,10 +79,6 @@ class GroupeCarteController extends BaseController
     public function show($id)
     {
         $groupe = GroupeCarte::find($id);
-
-        if (!$groupe) {
-            return $this->sendError('Groupe carte introuvable.');
-        }
 
         $groupe->cartes = $groupe->cartes()->get();
 
@@ -106,10 +102,6 @@ class GroupeCarteController extends BaseController
             return $this->sendError('Vous n\'avez pas les droits pour effectuer cette action.');
         } else {
             $groupe = GroupeCarte::find($id);
-
-            if (!$groupe) {
-                return $this->sendError('Groupe carte introuvable.');
-            }
 
             $validator =  Validator::make($request->all(), [
                 'nom' => 'string|max:255',
@@ -154,12 +146,10 @@ class GroupeCarteController extends BaseController
         } else {
             $groupe = GroupeCarte::find($id);
 
-            if (!$groupe) {
-                return $this->sendError('Groupe carte introuvable.');
-            }
-
             try {
                 DB::beginTransaction();
+
+                $groupe->cartes()->delete();
 
                 $groupe->delete();
 

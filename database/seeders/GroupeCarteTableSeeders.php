@@ -18,11 +18,13 @@ class GroupeCarteTableSeeders extends Seeder
         DB::table('groupe_cartes')->insert([
             [
                 'nom' => 'Cartes de Base',
+                'nom_en' => 'Base Maps',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'nom' => 'Images Satellites',
+                'nom_en' => 'Satellite Images',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]

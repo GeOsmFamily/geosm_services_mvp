@@ -52,9 +52,7 @@ class PermissionController extends BaseController
     public function show($id)
     {
         $permission = Permission::find($id);
-        if (is_null($permission)) {
-            return $this->sendError('Permission not found.');
-        }
+
         $permission->roles = $permission->roles->pluck('name');
         $success['permission'] = $permission;
         return $this->sendResponse($success, 'Permission retrieved successfully.');
@@ -77,9 +75,7 @@ class PermissionController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
         $permission = Permission::find($id);
-        if (is_null($permission)) {
-            return $this->sendError('Permission not found.');
-        }
+
         $permission->name = $input['name'];
         $permission->save();
         $success['permission'] = $permission;
@@ -95,9 +91,7 @@ class PermissionController extends BaseController
     public function destroy($id)
     {
         $permission = Permission::find($id);
-        if (is_null($permission)) {
-            return $this->sendError('Permission not found.');
-        }
+
         $permission->delete();
         $success['permission'] = $permission;
         return $this->sendResponse($success, 'Permission deleted successfully.');

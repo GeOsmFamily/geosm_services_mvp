@@ -13,10 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('groupe_cartes', function (Blueprint $table) {
+        Schema::create('sous_thematiques', function (Blueprint $table) {
             $table->id();
+            $table->integer('thematique_id')->unsigned();
             $table->string('nom');
-            $table->string('nom_en')->nullable();
+            $table->string('nom_en');
+            $table->string('image_src')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('groupe_cartes');
+        Schema::dropIfExists('sous_thematiques');
     }
 };

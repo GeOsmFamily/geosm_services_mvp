@@ -39,6 +39,26 @@ Route::middleware('auth.apikey')->group(
         Route::get('cartes', [App\Http\Controllers\Api\CarteController::class, 'index']);
         Route::get('cartes/{id}', [App\Http\Controllers\Api\CarteController::class, 'show']);
 
+        //Thematiques
+        Route::get('thematiques', [App\Http\Controllers\Api\ThematiqueController::class, 'index']);
+        Route::get('thematiques/{id}', [App\Http\Controllers\Api\ThematiqueController::class, 'show']);
+
+        //SousThematiques
+        Route::get('sousthematiques', [App\Http\Controllers\Api\SousThematiqueController::class, 'index']);
+        Route::get('sousthematiques/{id}', [App\Http\Controllers\Api\SousThematiqueController::class, 'show']);
+
+        //Couche
+        Route::get('couches', [App\Http\Controllers\Api\CoucheController::class, 'index']);
+        Route::get('couches/{id}', [App\Http\Controllers\Api\CoucheController::class, 'show']);
+
+        //Tag
+        Route::get('tags', [App\Http\Controllers\Api\TagController::class, 'index']);
+        Route::get('tags/{id}', [App\Http\Controllers\Api\TagController::class, 'show']);
+
+        //Instance
+        Route::get('instances', [App\Http\Controllers\Api\InstanceController::class, 'index']);
+        Route::get('instances/{id}', [App\Http\Controllers\Api\InstanceController::class, 'show']);
+
 
 
         Route::middleware('auth:api')->group(function () {
@@ -56,6 +76,25 @@ Route::middleware('auth.apikey')->group(
             Route::put('cartes/{id}', [App\Http\Controllers\Api\CarteController::class, 'update']);
             Route::delete('cartes/{id}', [App\Http\Controllers\Api\CarteController::class, 'destroy']);
 
+            Route::post('thematiques', [App\Http\Controllers\Api\ThematiqueController::class, 'store']);
+            Route::put('thematiques/{id}', [App\Http\Controllers\Api\ThematiqueController::class, 'update']);
+            Route::delete('thematiques/{id}', [App\Http\Controllers\Api\ThematiqueController::class, 'destroy']);
+
+            Route::post('sousthematiques', [App\Http\Controllers\Api\SousThematiqueController::class, 'store']);
+            Route::put('sousthematiques/{id}', [App\Http\Controllers\Api\SousThematiqueController::class, 'update']);
+            Route::delete('sousthematiques/{id}', [App\Http\Controllers\Api\SousThematiqueController::class, 'destroy']);
+
+            Route::post('couches', [App\Http\Controllers\Api\CoucheController::class, 'store']);
+            Route::put('couches/{id}', [App\Http\Controllers\Api\CoucheController::class, 'update']);
+            Route::delete('couches/{id}', [App\Http\Controllers\Api\CoucheController::class, 'destroy']);
+
+            Route::post('tags', [App\Http\Controllers\Api\TagController::class, 'store']);
+            Route::put('tags/{id}', [App\Http\Controllers\Api\TagController::class, 'update']);
+            Route::delete('tags/{id}', [App\Http\Controllers\Api\TagController::class, 'destroy']);
+
+            Route::post('instances', [App\Http\Controllers\Api\InstanceController::class, 'store']);
+            Route::put('instances/{id}', [App\Http\Controllers\Api\InstanceController::class, 'update']);
+            Route::delete('instances/{id}', [App\Http\Controllers\Api\InstanceController::class, 'destroy']);
 
 
             Route::group(['middleware' => ['role:admin']], function () {

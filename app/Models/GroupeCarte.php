@@ -35,6 +35,7 @@ class GroupeCarte extends Model
 
     protected $fillable = [
         'nom',
+        'nom_en',
     ];
 
     public function cartes()

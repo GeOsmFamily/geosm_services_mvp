@@ -83,7 +83,7 @@ class CarteController extends BaseController
             try {
                 DB::beginTransaction();
 
-                $carte = Carte::created($input);
+                $carte = Carte::create($input);
 
                 DB::commit();
 
@@ -106,9 +106,6 @@ class CarteController extends BaseController
     public function show($id)
     {
         $carte = Carte::find($id);
-        if (is_null($carte)) {
-            return $this->sendError('Carte non trouvée.');
-        }
         $carte->groupeCarte = $carte->groupeCarte()->get();
         $success['carte'] = $carte;
         return $this->sendResponse($success, 'Carte récupérée avec succès.');
@@ -156,9 +153,6 @@ class CarteController extends BaseController
             }
 
             $carte = Carte::find($id);
-            if (is_null($carte)) {
-                return $this->sendError('Carte non trouvée.');
-            }
 
             $input = $request->all();
 
@@ -210,11 +204,11 @@ class CarteController extends BaseController
             return $this->sendError('Vous n\'avez pas les droits pour effectuer cette action.');
         } else {
             $carte = Carte::find($id);
-            if (is_null($carte)) {
-                return $this->sendError('Carte non trouvée.');
-            }
+
             try {
                 DB::beginTransaction();
+
+                $carte->instances()->detach();
 
                 $carte->delete();
 
