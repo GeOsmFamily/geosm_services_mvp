@@ -1318,16 +1318,16 @@
         },
         {
             "name": "knuckleswtf/scribe",
-            "version": "3.29.1",
+            "version": "3.34.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/knuckleswtf/scribe.git",
-                "reference": "52b175a40150feb9bd8cd70b876090875780e192"
+                "reference": "185b327dd81d4c73dec7fc74fc473bfb05738c90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/knuckleswtf/scribe/zipball/52b175a40150feb9bd8cd70b876090875780e192",
-                "reference": "52b175a40150feb9bd8cd70b876090875780e192",
+                "url": "https://api.github.com/repos/knuckleswtf/scribe/zipball/185b327dd81d4c73dec7fc74fc473bfb05738c90",
+                "reference": "185b327dd81d4c73dec7fc74fc473bfb05738c90",
                 "shasum": ""
             },
             "require": {
@@ -1402,7 +1402,7 @@
             ],
             "support": {
                 "issues": "https://github.com/knuckleswtf/scribe/issues",
-                "source": "https://github.com/knuckleswtf/scribe/tree/3.29.1"
+                "source": "https://github.com/knuckleswtf/scribe/tree/3.34.0"
             },
             "funding": [
                 {
@@ -1410,7 +1410,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2022-05-22T12:56:09+00:00"
+            "time": "2022-07-16T14:14:18+00:00"
         },
         {
             "name": "laravel/framework",
@@ -3249,16 +3249,16 @@
         },
         {
             "name": "nunomaduro/collision",
-            "version": "v6.2.0",
+            "version": "v6.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nunomaduro/collision.git",
-                "reference": "c379636dc50e829edb3a8bcb944a01aa1aed8f25"
+                "reference": "5f058f7e39278b701e455b3c82ec5298cf001d89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nunomaduro/collision/zipball/c379636dc50e829edb3a8bcb944a01aa1aed8f25",
-                "reference": "c379636dc50e829edb3a8bcb944a01aa1aed8f25",
+                "url": "https://api.github.com/repos/nunomaduro/collision/zipball/5f058f7e39278b701e455b3c82ec5298cf001d89",
+                "reference": "5f058f7e39278b701e455b3c82ec5298cf001d89",
                 "shasum": ""
             },
             "require": {
@@ -3270,6 +3270,7 @@
             "require-dev": {
                 "brianium/paratest": "^6.4.1",
                 "laravel/framework": "^9.7",
+                "laravel/pint": "^0.2.1",
                 "nunomaduro/larastan": "^1.0.2",
                 "nunomaduro/mock-final-classes": "^1.1.0",
                 "orchestra/testbench": "^7.3.0",
@@ -3332,7 +3333,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2022-04-05T15:31:38+00:00"
+            "time": "2022-06-27T16:11:16+00:00"
         },
         {
             "name": "nyholm/psr7",
@@ -7019,16 +7020,16 @@
         },
         {
             "name": "symfony/var-exporter",
-            "version": "v6.0.9",
+            "version": "v6.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-exporter.git",
-                "reference": "51c9947398d4f87f0b5a861999534a95afcd971e"
+                "reference": "e3df004a8d0fb572c420a6915cd23db9254c8366"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/51c9947398d4f87f0b5a861999534a95afcd971e",
-                "reference": "51c9947398d4f87f0b5a861999534a95afcd971e",
+                "url": "https://api.github.com/repos/symfony/var-exporter/zipball/e3df004a8d0fb572c420a6915cd23db9254c8366",
+                "reference": "e3df004a8d0fb572c420a6915cd23db9254c8366",
                 "shasum": ""
             },
             "require": {
@@ -7071,7 +7072,7 @@
                 "serialize"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-exporter/tree/v6.0.9"
+                "source": "https://github.com/symfony/var-exporter/tree/v6.0.10"
             },
             "funding": [
                 {
@@ -7087,20 +7088,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-21T13:33:31+00:00"
+            "time": "2022-05-27T12:57:11+00:00"
         },
         {
             "name": "symfony/yaml",
-            "version": "v6.0.3",
+            "version": "v6.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "e77f3ea0b21141d771d4a5655faa54f692b34af5"
+                "reference": "3b039081c8a6ff8773db2fc11069f2da4960449c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/e77f3ea0b21141d771d4a5655faa54f692b34af5",
-                "reference": "e77f3ea0b21141d771d4a5655faa54f692b34af5",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/3b039081c8a6ff8773db2fc11069f2da4960449c",
+                "reference": "3b039081c8a6ff8773db2fc11069f2da4960449c",
                 "shasum": ""
             },
             "require": {
@@ -7145,7 +7146,7 @@
             "description": "Loads and dumps YAML files",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/yaml/tree/v6.0.3"
+                "source": "https://github.com/symfony/yaml/tree/v6.0.10"
             },
             "funding": [
                 {
@@ -7161,7 +7162,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-26T17:23:29+00:00"
+            "time": "2022-06-20T11:58:32+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
