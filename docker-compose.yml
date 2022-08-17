@@ -1,0 +1,66 @@
+version: "3"
+services:
+    geoportail_bamako:
+        build:
+            context: .
+            dockerfile: .docker/Dockerfile
+        image: geoportail_bamako
+        container_name: geoportail_bamako
+        ports:
+            - '${APP_PORT:-80}:80'
+        volumes:
+            - ./:/var/www/html
+        networks:
+            - geoportail_bamako
+        depends_on:
+            - geoportail_bamako_pgsql
+
+    geoportail_bamako_pgsql:
+        restart: always
+        image: 'postgres:13'
+        ports:
+            - '${FORWARD_DB_PORT:-5432}:5432'
+        container_name: geoportail_bamako_pgsql
+        environment:
+            PGPASSWORD: '${PG_PASSWORD:-secret}'
+            POSTGRES_DB: '${DB_DATABASE}'
+            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+        volumes:
+            - 'db-pgsql:/var/lib/postgresql/data'
+        networks:
+            - geoportail_bamako
+        healthcheck:
+            test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
+            retries: 3
+            timeout: 5s
+
+    geoportail_bamako_meilisearch:
+        container_name: geoportail_bamako_meilisearch
+        image: getmeili/meilisearch:v0.27.2
+        environment:
+            - http_proxy
+            - https_proxy
+            - MEILI_NO_ANALYTICS=${MEILI_NO_ANALYTICS:-true}
+            - MEILI_ENV=${MEILI_ENV:-development}
+            - MEILI_LOG_LEVEL
+            - MEILI_DB_PATH=${MEILI_DB_PATH:-/data.ms}
+        ports:
+            - ${MEILI_PORT:-7700}:7700
+        networks:
+            - ifdd
+        volumes:
+            - 'geoportail_bamako_meilisearch:/data.ms'
+        restart: unless-stopped
+        healthcheck:
+          test: ["CMD", "wget", "--no-verbose", "--spider",  "http://geoportail_bamako_meilisearch:7700/health"]
+          retries: 3
+          timeout: 5s
+networks:
+    geoportail_bamako:
+        driver: bridge
+volumes:
+    db-pgsql:
+        driver: local
+    geoportail_bamako_meilisearch:
+        driver: local
