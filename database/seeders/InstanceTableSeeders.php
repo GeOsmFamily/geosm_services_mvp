@@ -28,6 +28,7 @@ class InstanceTableSeeders extends Seeder
             'app_whatsapp' => '237 694 69 86 07',
             'app_facebook' => 'https://www.facebook.com/GeOsm.Family/',
             'app_twitter' => 'https://twitter.com/GeOsm_Family',
+            'mapillary_api_key' => '',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

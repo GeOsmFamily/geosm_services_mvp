@@ -23,6 +23,15 @@ class ThematiqueController extends BaseController
     public function index()
     {
         $thematiques = Thematique::all();
+        foreach ($thematiques as $thematique) {
+            foreach ($thematique->sousThematiques as $sousThematique) {
+                $sousThematique->couches;
+                foreach ($sousThematique->couches as $couche) {
+                    $couche->metadatas;
+                    $couche->tags;
+                }
+            }
+        }
         $success['thematiques'] = $thematiques;
         return $this->sendResponse($success, 'Thematiques récupérés avec succès.');
     }
@@ -104,6 +113,13 @@ class ThematiqueController extends BaseController
     public function show($id)
     {
         $thematique = Thematique::find($id);
+        foreach ($thematique->sousThematiques as $sousThematique) {
+            $sousThematique->couches;
+            foreach ($sousThematique->couches as $couche) {
+                $couche->metadatas;
+                $couche->tags;
+            }
+        }
 
         $success['thematique'] = $thematique;
         return $this->sendResponse($success, 'Thématique récupérée avec succès.');

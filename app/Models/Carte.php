@@ -76,4 +76,9 @@ class Carte extends Model
     {
         return $this->belongsTo(GroupeCarte::class);
     }
+
+    public function metadatas()
+    {
+        return $this->hasOne(Metadata::class);
+    }
 }

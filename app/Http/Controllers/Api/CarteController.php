@@ -25,7 +25,9 @@ class CarteController extends BaseController
         $cartes = Carte::all();
         foreach ($cartes as $carte) {
             $carte->groupeCarte = $carte->groupeCarte()->get();
+            $carte->metadatas;
         }
+
         $success['cartes'] = $cartes;
         return $this->sendResponse($success, 'Cartes récupérés avec succès.');
     }
@@ -107,6 +109,7 @@ class CarteController extends BaseController
     {
         $carte = Carte::find($id);
         $carte->groupeCarte = $carte->groupeCarte()->get();
+        $carte->metadatas;
         $success['carte'] = $carte;
         return $this->sendResponse($success, 'Carte récupérée avec succès.');
     }

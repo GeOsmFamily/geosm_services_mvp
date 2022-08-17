@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Scout\Searchable;
 
 class Couche extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Searchable;
 
     protected $fillable = [
         'sous_thematique_id',
@@ -45,5 +46,10 @@ class Couche extends Model
     public function tags()
     {
         return $this->hasMany(Tag::class);
+    }
+
+    public function metadatas()
+    {
+        return $this->hasOne(Metadata::class);
     }
 }

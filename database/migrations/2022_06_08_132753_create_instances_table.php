@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('app_whatsapp')->nullable();
             $table->string('app_facebook')->nullable();
             $table->string('app_twitter')->nullable();
+            $table->text('mapillary_api_key')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -50,6 +50,7 @@ Route::middleware('auth.apikey')->group(
         //Couche
         Route::get('couches', [App\Http\Controllers\Api\CoucheController::class, 'index']);
         Route::get('couches/{id}', [App\Http\Controllers\Api\CoucheController::class, 'show']);
+        Route::get('search/couches', [App\Http\Controllers\Api\CoucheController::class, 'searchCouche']);
 
         //Tag
         Route::get('tags', [App\Http\Controllers\Api\TagController::class, 'index']);
@@ -58,6 +59,21 @@ Route::middleware('auth.apikey')->group(
         //Instance
         Route::get('instances', [App\Http\Controllers\Api\InstanceController::class, 'index']);
         Route::get('instances/{id}', [App\Http\Controllers\Api\InstanceController::class, 'show']);
+
+        //Commentaire
+        Route::get('commentaires', [App\Http\Controllers\Api\CommentaireController::class, 'index']);
+        Route::get('commentaires/{id}', [App\Http\Controllers\Api\CommentaireController::class, 'show']);
+
+        //Metadatas
+        Route::get('metadatas', [App\Http\Controllers\Api\MetadataController::class, 'index']);
+        Route::get('metadatas/{id}', [App\Http\Controllers\Api\MetadataController::class, 'show']);
+
+        //Draw
+        Route::get('draws', [App\Http\Controllers\Api\DrawController::class, 'index']);
+        Route::get('draws/code/{code}', [App\Http\Controllers\Api\DrawController::class, 'getAllDrawByCode']);
+        Route::get('draws/{id}', [App\Http\Controllers\Api\DrawController::class, 'show']);
+        Route::post('draws', [App\Http\Controllers\Api\DrawController::class, 'store']);
+        Route::put('draws/{id}', [App\Http\Controllers\Api\DrawController::class, 'update']);
 
 
 
@@ -95,6 +111,16 @@ Route::middleware('auth.apikey')->group(
             Route::post('instances', [App\Http\Controllers\Api\InstanceController::class, 'store']);
             Route::put('instances/{id}', [App\Http\Controllers\Api\InstanceController::class, 'update']);
             Route::delete('instances/{id}', [App\Http\Controllers\Api\InstanceController::class, 'destroy']);
+
+            Route::post('commentaires', [App\Http\Controllers\Api\CommentaireController::class, 'store']);
+            Route::put('commentaires/{id}', [App\Http\Controllers\Api\CommentaireController::class, 'update']);
+            Route::delete('commentaires/{id}', [App\Http\Controllers\Api\CommentaireController::class, 'destroy']);
+
+            Route::post('metadatas', [App\Http\Controllers\Api\MetadataController::class, 'store']);
+            Route::put('metadatas/{id}', [App\Http\Controllers\Api\MetadataController::class, 'update']);
+            Route::delete('metadatas/{id}', [App\Http\Controllers\Api\MetadataController::class, 'destroy']);
+
+            Route::delete('draws/{id}', [App\Http\Controllers\Api\DrawController::class, 'destroy']);
 
 
             Route::group(['middleware' => ['role:admin']], function () {

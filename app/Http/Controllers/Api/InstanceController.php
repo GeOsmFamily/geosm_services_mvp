@@ -54,6 +54,7 @@ class InstanceController extends BaseController
      * @bodyParam app_whatsapp string Whatsapp of app Example: ""
      * @bodyParam app_facebook string Facebook of app Example: ""
      * @bodyParam app_twitter string Twitter of app Example: ""
+     * @bodyParam mapillary_api_key string Mapillary Api Key Example: ""
      *
      */
     public function store(Request $request)
@@ -132,7 +133,9 @@ class InstanceController extends BaseController
      * @bodyParam app_whatsapp string Whatsapp of app Example: ""
      * @bodyParam app_facebook string Facebook of app Example: ""
      * @bodyParam app_twitter string Twitter of app Example: ""
+     * @bodyParam mapillary_api_key string Mapillary Api Key Example: ""
      * @urlParam id int required the instance id. Example: 1
+     *
      *
      */
     public function update(Request $request, $id)
@@ -162,6 +165,7 @@ class InstanceController extends BaseController
                 $instance->app_whatsapp = $request->app_whatsapp ?? $instance->app_whatsapp;
                 $instance->app_facebook = $request->app_facebook ?? $instance->app_facebook;
                 $instance->app_twitter = $request->app_twitter ?? $instance->app_twitter;
+                $instance->mapillary_api_key = $request->mapillary_api_key ?? $instance->mapillary_api_key;
 
                 $instance->save();
 

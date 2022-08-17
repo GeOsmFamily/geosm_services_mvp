@@ -24,6 +24,7 @@ class Instance extends Model
         'app_whatsapp',
         'app_facebook',
         'app_twitter',
+        'mapillary_api_key',
     ];
 
     protected $hidden = [

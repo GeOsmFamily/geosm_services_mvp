@@ -33,6 +33,8 @@ class CoucheController extends BaseController
             foreach ($couche->sousThematique as $sousThematique) {
                 $sousThematique->thematique = $sousThematique->thematique()->get();
             }
+            $couche->metadatas;
+            $couche->tags;
         }
         $success['couches'] = $couches;
         return $this->sendResponse($success, 'Couches récupérés avec succès.');
@@ -327,7 +329,8 @@ class CoucheController extends BaseController
         foreach ($couche->sousThematique as $sousThematique) {
             $sousThematique->thematique = $sousThematique->thematique()->get();
         }
-
+        $couche->metadatas;
+        $couche->tags;
         $success['couche'] = $couche;
         return $this->sendResponse($success, 'Couche récupérée avec succès.');
     }
@@ -635,5 +638,25 @@ class CoucheController extends BaseController
             DB::rollBack();
             return false;
         }
+    }
+
+    /**
+     * Search Couche.
+     *
+     * @header Content-Type application/json
+     * @queryParam q string required search value. Example: boulangerie
+     */
+    public function searchCouche(Request $request)
+    {
+        $q = $request->input('q');
+        $couches = Couche::search($q)->get();
+        foreach ($couches as $couche) {
+            $couche->sousThematique = $couche->sousThematique()->get();
+            foreach ($couche->sousThematique as $sousThematique) {
+                $sousThematique->thematique = $sousThematique->thematique()->get();
+            }
+        }
+        $success['couches'] = $couches;
+        return $this->sendResponse($success, 'Couches récupérés avec succès.');
     }
 }
