@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\User;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Knuckles\Scribe\Scribe;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-         if (!\App::environment('local')) {
+        if (!\App::environment('local')) {
             URL::forceScheme('https');
         }
 
