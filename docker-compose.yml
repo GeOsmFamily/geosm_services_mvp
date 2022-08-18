@@ -14,6 +14,7 @@ services:
             - geoportail_bamako
         depends_on:
             - geoportail_bamako_pgsql
+            - geoportail_bamako_meilisearch
 
     geoportail_bamako_pgsql:
         restart: always
@@ -48,7 +49,7 @@ services:
         ports:
             - ${MEILI_PORT:-7700}:7700
         networks:
-            - ifdd
+            - geoportail_bamako
         volumes:
             - 'geoportail_bamako_meilisearch:/data.ms'
         restart: unless-stopped

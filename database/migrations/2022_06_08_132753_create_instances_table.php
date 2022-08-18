@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('instances', function (Blueprint $table) {
             $table->id();
             $table->string('nom');
-            $table->geometry('geom')->nullable();
+            $table->text('geom')->nullable();
             $table->boolean('mapillary')->default(true);
             $table->boolean('comparator')->default(true);
             $table->boolean('altimetrie')->default(false);
