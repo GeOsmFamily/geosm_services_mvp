@@ -52,7 +52,7 @@ SCOUT_DRIVER=meilisearch
 MEILISEARCH_HOST=
 MEILISEARCH_KEY=
 
-MEILI_PORT=
+
 ```
 
 -   edit & add Docker config in .env
@@ -61,6 +61,7 @@ MEILI_PORT=
 APP_PORT=
 FORWARD_DB_PORT=
 PG_PASSWORD=
+MEILI_PORT=
 ```
 
 ```
