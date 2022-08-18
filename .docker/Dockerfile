@@ -29,6 +29,9 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install zip \
     && docker-php-source delete
 
+RUN apt-get update &&\
+    apt-get install -y binutils libproj-dev gdal-bin
+
 RUN apt-get install -y apache2
 
 COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
