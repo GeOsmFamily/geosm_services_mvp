@@ -88,6 +88,35 @@ go to services folder
 $ chown -R www-data:www-data *
 ```
 
+-   change geom type in database to geometry
+
+-   upload shp in laravel folder
+
+-   execute command and change params
+
+```
+$ docker exec -it geoportail_bamako bash
+$ ogr2ogr -f "PostgreSQL" PG:"host=geoportail_bamako_pgsql user=postgres dbname=bamako password=postgres" shp/bamako.shp   -nln temp_table -nlt MULTIPOLYGON  -lco GEOMETRY_NAME=geom -lco precision=NO
+```
+
+-   go to pgadmin and execute query
+
+```
+UPDATE instances SET geom = ST_Buffer(st_transform(limite.geom ,4326)::geography,10)::geometry FROM (SELECT * from temp_table limit 1) as limite WHERE instances.id = 1;
+
+TRUNCATE temp_table;
+```
+
+-   install osm2pgsql
+
+-   create osm folder in laravel folder and add default.style file
+
+-   load osm data
+
+```
+$ osm2pgsql --cache 10000 --number-processes 5 --extra-attributes --slim -G -c -U postgres -d $db -H localhost -W --hstore-all -S osm/default.style https://download.geofabrik.de/africa/mali-latest.osm.pbf
+```
+
 ## Documentation
 
 ### Allowed verbs

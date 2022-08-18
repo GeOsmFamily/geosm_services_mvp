@@ -27,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+         if (!\App::environment('local')) {
+            URL::forceScheme('https');
+        }
+
         if (class_exists(\Knuckles\Scribe\Scribe::class)) {
             Scribe::beforeResponseCall(function (Request $request, ExtractedEndpointData $endpointData) {
                 $token = User::first()->createToken('GeOsm')->accessToken;
