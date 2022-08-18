@@ -18,7 +18,9 @@ services:
 
     geoportail_bamako_pgsql:
         restart: always
-        image: 'postgres:13'
+        build:
+            context: .
+            dockerfile: .docker/Dockerfile-db
         ports:
             - '${FORWARD_DB_PORT:-5432}:5432'
         container_name: geoportail_bamako_pgsql
@@ -27,8 +29,6 @@ services:
             POSTGRES_DB: '${DB_DATABASE}'
             POSTGRES_USER: '${DB_USERNAME}'
             POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
-        volumes:
-            - 'db-pgsql:/var/lib/postgresql/data'
         networks:
             - geoportail_bamako
         healthcheck:
@@ -61,7 +61,5 @@ networks:
     geoportail_bamako:
         driver: bridge
 volumes:
-    db-pgsql:
-        driver: local
     geoportail_bamako_meilisearch:
         driver: local
