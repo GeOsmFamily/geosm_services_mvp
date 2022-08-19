@@ -162,7 +162,7 @@ class CoucheController extends BaseController
                             'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
                             'geometry' => $couche->geometry,
                             'identifiant' =>  $couche->identifiant,
-                            'path_qml' => 'geosm_mvp/' . $instance->nom . '/' . $data_qml,
+                            'path_qml' => '/var/www/html/geosm_mvp/' . $instance->nom . '/' . $data_qml,
                         ]);
 
 
@@ -201,7 +201,7 @@ class CoucheController extends BaseController
                             'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
                             'geometry' => $couche->geometry,
                             'identifiant' =>  $couche->identifiant,
-                            'path_logo' => 'geosm_mvp/' . $instance->nom . '/' . $couche->logo,
+                            'path_logo' => '/var/www/html/geosm_mvp/' . $instance->nom . '/' . $couche->logo,
                             'color' => $couche->remplir_color
                         ]);
 
@@ -239,10 +239,10 @@ class CoucheController extends BaseController
                         $response = Http::timeout(500)->post(env('CARTO_URL') . '/addotherlayer', [
                             'qgis_project_name' => $qgis_project_name,
                             'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
-                            'path_data' => 'geosm_mvp/' . $instance->nom . '/' .  $data_src,
+                            'path_data' => '/var/www/html/geosm_mvp/' . $instance->nom . '/' .  $data_src,
                             'geometry' => $couche->geometry,
                             'identifiant' =>  $couche->identifiant,
-                            'path_qml' => 'geosm_mvp/' . $instance->nom . '/' . $data_qml,
+                            'path_qml' => '/var/www/html/geosm_mvp/' . $instance->nom . '/' . $data_qml,
                         ]);
 
 
@@ -273,10 +273,10 @@ class CoucheController extends BaseController
 
                             'qgis_project_name' => $qgis_project_name,
                             'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
-                            'path_data' => 'geosm_mvp/' . $instance->nom . '/' . $data_src,
+                            'path_data' => '/var/www/html/geosm_mvp/' . $instance->nom . '/' . $data_src,
                             'geometry' => $couche->geometry,
                             'identifiant' =>  $couche->identifiant,
-                            'path_logo' => 'geosm_mvp/' . $instance->nom . '/' . $couche->logo,
+                            'path_logo' => '/var/www/html/geosm_mvp/' . $instance->nom . '/' . $couche->logo,
                             'color' => $couche->remplir_color
                         ]);
 
