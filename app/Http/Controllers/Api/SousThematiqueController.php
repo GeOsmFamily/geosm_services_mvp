@@ -51,7 +51,7 @@ class SousThematiqueController extends BaseController
                 'thematique_id' => 'required|integer',
                 'nom' => 'required|string|max:255',
                 'nom_en' => 'required|string|max:255',
-                'image_src' => 'mimes:png,jpg,jpeg|max:20000',
+                'image_src' => 'mimes:png,jpg,jpeg,svg|max:20000',
             ]);
 
             if ($validator->fails()) {

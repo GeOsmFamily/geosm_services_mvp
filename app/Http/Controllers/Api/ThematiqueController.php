@@ -57,7 +57,7 @@ class ThematiqueController extends BaseController
             $validator =  Validator::make($request->all(), [
                 'nom' => 'required|string|max:255',
                 'nom_en' => 'required|string|max:255',
-                'image_src' => 'mimes:png,jpg,jpeg|max:20000',
+                'image_src' => 'mimes:png,jpg,jpeg,svg|max:20000',
                 'color' => 'required|string|max:255',
             ]);
 
