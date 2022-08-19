@@ -263,7 +263,7 @@ class CoucheController extends BaseController
                                 $couche->number_features = $features;
                                 $couche->save();
                             } else {
-                                return $this->sendError('Erreur lors de la création de la couche.', $response->json("message"), 400);
+                                return $this->sendError('Erreur lors de la création de la couche.', $response->json("error"), 400);
                             }
                         } else {
                             return $this->sendError('Erreur lors de la création de la couche.', "Request Failed", 400);
