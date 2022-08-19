@@ -111,18 +111,19 @@ class CoucheController extends BaseController
                 $fileName = time() . '_' . $request->logo->getClientOriginalName();
                 $filePath = $request->file('logo')->storeAs('uploads/couches/logos/' . $instance->nom . '/' . $request->nom, $fileName, 'public');
                 $input['logo'] = '/storage/' . $filePath;
+                $logo_path = '/storage/app/public/' . $filePath;
             }
 
             if ($request->file('data_src')) {
                 $fileName = time() . '_' . $request->data_src->getClientOriginalName();
                 $filePath = $request->file('data_src')->storeAs('uploads/couches/datas/' . $instance->nom . '/' . $request->nom, $fileName, 'public');
-                $data_src = '/storage/' . $filePath;
+                $data_src = '/storage/app/public/' . $filePath;
             }
 
             if ($request->file('data_qml')) {
                 $fileName = time() . '_' . $request->data_qml->getClientOriginalName();
                 $filePath = $request->file('data_qml')->storeAs('uploads/couches/qml/' . $instance->nom . '/' . $request->nom, $fileName, 'public');
-                $data_qml = '/storage/' . $filePath;
+                $data_qml = '/storage/app/public/' . $filePath;
             }
 
             try {
@@ -201,7 +202,7 @@ class CoucheController extends BaseController
                             'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
                             'geometry' => $couche->geometry,
                             'identifiant' =>  $couche->identifiant,
-                            'path_logo' => '/var/www/html/src/geosm_mvp/' . $instance->nom  . $couche->logo,
+                            'path_logo' => '/var/www/html/src/geosm_mvp/' . $instance->nom  . $logo_path,
                             'color' => $couche->remplir_color
                         ]);
 
