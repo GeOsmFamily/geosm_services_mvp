@@ -232,7 +232,7 @@ class CoucheController extends BaseController
                             return $this->sendError('Erreur lors de la création de la couche.', "Request Failed", 400);
                         }
                     }
-                } else {
+                } else if ($request->wms_type == 'data') {
 
                     $qgis_project_name = $instance->nom . $sousThematique->thematique->id;
 
@@ -304,6 +304,13 @@ class CoucheController extends BaseController
                             return $this->sendError('Erreur lors de la création de la couche.', "Request Failed", 400);
                         }
                     }
+                } else if ($request->wms_type == 'qgis') {
+                    $couche->identifiant = $request->identifiant;
+                    $couche->qgis_url = $request->qgis_url;
+                    $couche->bbox = $request->bbox;
+                    $couche->projection = $request->projection;
+                    $couche->number_features = $request->number_features;
+                    $couche->save();
                 }
 
                 DB::commit();

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('url');
             $table->string('image_url')->nullable();
             $table->string('type')->nullable();
-            $table->string('identifiant')->nullable();
+            $table->text('identifiant')->nullable();
             $table->string('bbox')->nullable();
             $table->string('projection')->nullable();
             $table->string('zmax')->nullable();
