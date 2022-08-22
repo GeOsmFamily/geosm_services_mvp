@@ -1,43 +1,43 @@
 version: "3"
 services:
-    geoportail_bamako:
+    geoportail_pradec:
         build:
             context: .
             dockerfile: .docker/Dockerfile
-        image: geoportail_bamako
-        container_name: geoportail_bamako
+        image: geoportail_pradec
+        container_name: geoportail_pradec
         ports:
             - '${APP_PORT:-80}:80'
         volumes:
             - ./:/var/www/html
         networks:
-            - geoportail_bamako
+            - geoportail_pradec
         depends_on:
-            - geoportail_bamako_pgsql
-            - geoportail_bamako_meilisearch
+            - geoportail_pradec_pgsql
+            - geoportail_pradec_meilisearch
 
-    geoportail_bamako_pgsql:
+    geoportail_pradec_pgsql:
         restart: always
         build:
             context: .
             dockerfile: .docker/Dockerfile-db
         ports:
             - '${FORWARD_DB_PORT:-5432}:5432'
-        container_name: geoportail_bamako_pgsql
+        container_name: geoportail_pradec_pgsql
         environment:
             PGPASSWORD: '${PG_PASSWORD:-secret}'
             POSTGRES_DB: '${DB_DATABASE}'
             POSTGRES_USER: '${DB_USERNAME}'
             POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
         networks:
-            - geoportail_bamako
+            - geoportail_pradec
         healthcheck:
             test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
             retries: 3
             timeout: 5s
 
-    geoportail_bamako_meilisearch:
-        container_name: geoportail_bamako_meilisearch
+    geoportail_pradec_meilisearch:
+        container_name: geoportail_pradec_meilisearch
         image: getmeili/meilisearch:v0.27.2
         environment:
             - http_proxy
@@ -49,17 +49,17 @@ services:
         ports:
             - ${MEILI_PORT:-7700}:7700
         networks:
-            - geoportail_bamako
+            - geoportail_pradec
         volumes:
-            - 'geoportail_bamako_meilisearch:/data.ms'
+            - 'geoportail_pradec_meilisearch:/data.ms'
         restart: unless-stopped
         healthcheck:
-          test: ["CMD", "wget", "--no-verbose", "--spider",  "http://geoportail_bamako_meilisearch:7700/health"]
+          test: ["CMD", "wget", "--no-verbose", "--spider",  "http://geoportail_pradec_meilisearch:7700/health"]
           retries: 3
           timeout: 5s
 networks:
-    geoportail_bamako:
+    geoportail_pradec:
         driver: bridge
 volumes:
-    geoportail_bamako_meilisearch:
+    geoportail_pradec_meilisearch:
         driver: local

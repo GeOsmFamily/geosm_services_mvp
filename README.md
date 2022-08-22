@@ -66,7 +66,7 @@ MEILI_PORT=
 
 ```
 $ docker-compose up -d
-$ docker exec -it geoportail_bamako bash
+$ docker exec -it geoportail_pradec bash
 $ composer install
 ```
 
@@ -95,8 +95,8 @@ $ chown -R www-data:www-data *
 -   execute command and change params
 
 ```
-$ docker exec -it geoportail_bamako bash
-$ ogr2ogr -f "PostgreSQL" PG:"host=geoportail_bamako_pgsql user=postgres dbname=bamako password=postgres" shp/bamako.shp   -nln temp_table -nlt MULTIPOLYGON  -lco GEOMETRY_NAME=geom -lco precision=NO
+$ docker exec -it geoportail_pradec bash
+$ ogr2ogr -f "PostgreSQL" PG:"host=geoportail_pradec_pgsql user=postgres dbname=pradec password=postgres" shp/pradec.shp   -nln temp_table -nlt MULTIPOLYGON  -lco GEOMETRY_NAME=geom -lco precision=NO
 ```
 
 -   go to pgadmin and execute query
