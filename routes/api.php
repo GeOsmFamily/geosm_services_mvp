@@ -68,6 +68,17 @@ Route::middleware('auth.apikey')->group(
         Route::get('metadatas', [App\Http\Controllers\Api\MetadataController::class, 'index']);
         Route::get('metadatas/{id}', [App\Http\Controllers\Api\MetadataController::class, 'show']);
 
+        //Ouvrage
+        Route::get('ouvrages', [App\Http\Controllers\Api\OuvrageController::class, 'index']);
+        Route::post('ouvragesbysyndicat', [App\Http\Controllers\Api\OuvrageController::class, 'searchBySyndicat']);
+
+        Route::post('ouvragesbydepartement', [App\Http\Controllers\Api\OuvrageController::class, 'searchByDepartement']);
+
+        Route::post('ouvragesbycommune', [App\Http\Controllers\Api\OuvrageController::class, 'searchByCommune']);
+
+        Route::post('ouvragesglobalsearch', [App\Http\Controllers\Api\OuvrageController::class, 'globalSearch']);
+        Route::get('ouvrages/{id}', [App\Http\Controllers\Api\OuvrageController::class, 'show']);
+
         //Draw
         Route::get('draws', [App\Http\Controllers\Api\DrawController::class, 'index']);
         Route::get('draws/code/{code}', [App\Http\Controllers\Api\DrawController::class, 'getAllDrawByCode']);
