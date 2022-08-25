@@ -96,8 +96,8 @@ class OuvrageController extends BaseController
         $nomcommune = $request->nomcommune;
 
         $ouvrages = Ouvrage::where('nomcommunebe', $nomcommune)
-            ->orWhere('nomcommunemr', $nomcommune)
-            ->orWhere('nomcommuneml', $nomcommune)
+
+            ->orWhere('nomcommune', $nomcommune)
             ->get();
 
 
@@ -107,19 +107,778 @@ class OuvrageController extends BaseController
     public function globalSearch(Request $request)
     {
         $nomsyndicat = $request->nomsyndicat;
-        $nomdepartement = $request->nomdepartement;
         $nomcommune = $request->nomcommune;
-        $typeOuvrage = $request->typeouvrage;
-        $typePointEau = $request->typepointeau;
+        $typeeau = $request->typeeau;
+        $question = $request->question;
 
-        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
-            ->where('nomdepartement', $nomdepartement)
-            ->where('nomcommuneml', $nomcommune)
-            ->orWhere('nomcommunemr', $nomcommune)
-            ->orWhere('nomcommunebe', $nomcommune)
-            ->where('typeouvrage', $typeOuvrage)
-            ->orWhere('typepointeau', $typePointEau)
-            ->get();
+
+        if ($question == "1") {
+            if ($nomsyndicat == "Tout") {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                }
+            } else {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('nomcommune', $nomcommune)
+                            ->where('etat', 'Bon')
+
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                }
+            }
+        }
+
+        if ($question == "2") {
+            if ($nomsyndicat == "Tout") {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Endomagé')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Endomagé')
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Endomagé')
+                            ->where('nomcommune', $nomcommune)
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Endomagé')
+                            ->where('nomcommune', $nomcommune)
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                }
+            } else {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Endomagé')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Endomagé')
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Endomagé')
+                            ->where('nomcommune', $nomcommune)
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Endomagé')
+                            ->where('nomcommune', $nomcommune)
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                }
+            }
+        }
+
+        if ($question == "3") {
+            if ($nomsyndicat == "Tout") {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('fontionnel', 'Non')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('fontionnel', 'Non')
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('fontionnel', 'Non')
+                            ->where('nomcommune', $nomcommune)
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('fontionnel', 'Non')
+                            ->where('nomcommune', $nomcommune)
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                }
+            } else {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('fontionnel', 'Non')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('fontionnel', 'Non')
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+                            ->where('fontionnel', 'Non')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+                            ->where('fontionnel', 'Non')
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                }
+            }
+        }
+
+        if ($question == "4") {
+            if ($nomsyndicat == "Tout") {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+
+                            ->where('fontionnel', 'Oui')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('fontionnel', 'Oui')
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('fontionnel', 'Oui')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('fontionnel', 'Oui')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                }
+            } else {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+
+                            ->where('fontionnel', 'Oui')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('fontionnel', 'Oui')
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('fontionnel', 'Oui')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+                            ->where('fontionnel', 'Oui')
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                }
+            }
+        }
+
+        if ($question == "5") {
+            if ($nomsyndicat == "Tout") {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+
+                            ->where('fontionnel', 'Oui')
+                            ->where('qualiteeau', 'Bonne')
+                            ->get();
+                    } else {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('fontionnel', 'Oui')
+
+                            ->where('typeeau', $typeeau)
+                            ->where('qualiteeau', 'Bonne')
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('fontionnel', 'Oui')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('qualiteeau', 'Bonne')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('fontionnel', 'Oui')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('typeeau', $typeeau)
+                            ->where('qualiteeau', 'Bonne')
+                            ->get();
+                    }
+                }
+            } else {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+
+                            ->where('fontionnel', 'Oui')
+                            ->where('qualiteeau', 'Bonne')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('fontionnel', 'Oui')
+
+                            ->where('typeeau', $typeeau)
+                            ->where('qualiteeau', 'Bonne')
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('qualiteeau', 'Bonne')
+                            ->where('fontionnel', 'Oui')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+                            ->where('fontionnel', 'Oui')
+
+                            ->where('typeeau', $typeeau)
+                            ->where('qualiteeau', 'Bonne')
+                            ->get();
+                    }
+                }
+            }
+        }
+
+        if ($question == "6") {
+            if ($nomsyndicat == "Tout") {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+
+                            ->where('fontionnel', 'Oui')
+                            ->where('qualiteeau', 'Mauvaise')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('fontionnel', 'Oui')
+
+                            ->where('typeeau', $typeeau)
+                            ->where('qualiteeau', 'Mauvaise')
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('fontionnel', 'Oui')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('qualiteeau', 'Mauvaise')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('fontionnel', 'Oui')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('typeeau', $typeeau)
+                            ->where('qualiteeau', 'Mauvaise')
+                            ->get();
+                    }
+                }
+            } else {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+
+                            ->where('fontionnel', 'Oui')
+                            ->where('qualiteeau', 'Mauvaise')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('fontionnel', 'Oui')
+
+                            ->where('typeeau', $typeeau)
+                            ->where('qualiteeau', 'Mauvaise')
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('qualiteeau', 'Mauvaise')
+                            ->where('fontionnel', 'Oui')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+                            ->where('fontionnel', 'Oui')
+
+                            ->where('typeeau', $typeeau)
+                            ->where('qualiteeau', 'Mauvaise')
+                            ->get();
+                    }
+                }
+            }
+        }
+
+        if ($question == "7") {
+            if ($nomsyndicat == "Tout") {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Formel')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Formel')
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Formel')
+                            ->where('nomcommune', $nomcommune)
+
+
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Formel')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                }
+            } else {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Formel')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Formel')
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Formel')
+                            ->where('nomcommune', $nomcommune)
+
+
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Formel')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                }
+            }
+        }
+
+        if ($question == "8") {
+            if ($nomsyndicat == "Tout") {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Informel')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Informel')
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Informel')
+                            ->where('nomcommune', $nomcommune)
+
+
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Informel')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                }
+            } else {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Informel')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Informel')
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Informel')
+                            ->where('nomcommune', $nomcommune)
+
+
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('existencecomitegestion', 'Oui')
+                            ->where('statutlegal', 'Informel')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('typeeau', $typeeau)
+                            ->get();
+                    }
+                }
+            }
+        }
+
+        if ($question == "9") {
+            if ($nomsyndicat == "Tout") {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+
+                            ->where('fontionnel', 'Non')
+                            ->where('existencecomitegestion', 'Oui')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+
+                            ->where('typeeau', $typeeau)
+                            ->where('fontionnel', 'Non')
+                            ->where('existencecomitegestion', 'Oui')
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('fontionnel', 'Non')
+                            ->where('existencecomitegestion', 'Oui')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('typeeau', $typeeau)
+                            ->where('fontionnel', 'Non')
+                            ->where('existencecomitegestion', 'Oui')
+                            ->get();
+                    }
+                }
+            } else {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+
+                            ->where('fontionnel', 'Non')
+                            ->where('existencecomitegestion', 'Oui')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+
+                            ->where('typeeau', $typeeau)
+                            ->where('fontionnel', 'Non')
+                            ->where('existencecomitegestion', 'Oui')
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('fontionnel', 'Non')
+                            ->where('existencecomitegestion', 'Oui')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('typeeau', $typeeau)
+                            ->where('fontionnel', 'Non')
+                            ->where('existencecomitegestion', 'Oui')
+                            ->get();
+                    }
+                }
+            }
+        }
+
+        if ($question == "10") {
+            if ($nomsyndicat == "Tout") {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+
+                            ->where('fontionnel', 'Oui')
+                            ->where('existencecomitegestion', 'Non')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+
+                            ->where('typeeau', $typeeau)
+                            ->where('fontionnel', 'Oui')
+                            ->where('existencecomitegestion', 'Non')
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('fontionnel', 'Oui')
+                            ->where('existencecomitegestion', 'Non')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('typeeau', $typeeau)
+                            ->where('fontionnel', 'Oui')
+                            ->where('existencecomitegestion', 'Non')
+                            ->get();
+                    }
+                }
+            } else {
+                if ($nomcommune == "Tout") {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+
+                            ->where('fontionnel', 'Oui')
+                            ->where('existencecomitegestion', 'Non')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+
+                            ->where('typeeau', $typeeau)
+                            ->where('fontionnel', 'Oui')
+                            ->where('existencecomitegestion', 'Non')
+                            ->get();
+                    }
+                } else {
+                    if ($typeeau == "Tout") {
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('fontionnel', 'Oui')
+                            ->where('existencecomitegestion', 'Non')
+                            ->get();
+                    } else {
+
+                        $ouvrages = Ouvrage::where('nomsyndicat', $nomsyndicat)
+                            ->where('etat', 'Bon')
+                            ->where('nomcommune', $nomcommune)
+
+
+
+                            ->where('typeeau', $typeeau)
+                            ->where('fontionnel', 'Oui')
+                            ->where('existencecomitegestion', 'Non')
+                            ->get();
+                    }
+                }
+            }
+        }
 
 
         return $this->createGeojson($ouvrages);
@@ -132,12 +891,12 @@ class OuvrageController extends BaseController
             $lon = floatval(str_replace(",", ".", $data->longitude));
             $lat = floatval(str_replace(",", ".", $data->latitude));
             $geometry = [
-                "type" => "Point",
+                "typeeau" => "Point",
                 "coordinates" => [$lon, $lat]
             ];
 
             $response[] = [
-                "type" => "Feature",
+                "typeeau" => "Feature",
                 "geometry" => $geometry,
                 "properties" => $data
             ];
@@ -148,12 +907,12 @@ class OuvrageController extends BaseController
         ];
 
         $crs = [
-            "type" => "name", "properties" => $name
+            "typeeau" => "name", "properties" => $name
         ];
 
 
         $geojson = [
-            "type" => "FeatureCollection",
+            "typeeau" => "FeatureCollection",
             "name" => "sql_statement",
             "crs" =>  $crs,
             "features" => $response
