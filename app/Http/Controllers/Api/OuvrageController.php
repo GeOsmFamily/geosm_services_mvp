@@ -1759,7 +1759,7 @@ class OuvrageController extends BaseController
                             $couche = Couche::create($input);
 
                             $couche->identifiant = $input['identifiant'];
-                            $couche->qgis_url = 'https://qgis.geosm.org/ows?map=pradec/pradec.qgs';
+                            $couche->qgis_url = 'https://qgis.geosm.org/ows?map=pradec/pradec.qgz';
 
                             $couche->number_features = count($data['features']);
                             $couche->save();
