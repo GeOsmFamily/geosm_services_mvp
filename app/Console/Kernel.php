@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\AddMeta;
 use App\Console\Commands\LoadDB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -32,6 +33,7 @@ class Kernel extends ConsoleKernel
     }
 
     protected $commands = [
-        LoadDB::class
+        LoadDB::class,
+        AddMeta::class
     ];
 }

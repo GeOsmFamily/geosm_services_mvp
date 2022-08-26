@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Couche;
 use App\Models\Instance;
+use App\Models\Metadata;
 use App\Models\Ouvrage;
 use App\Models\SousThematique;
 use Illuminate\Http\Request;
@@ -1769,6 +1770,17 @@ class OuvrageController extends BaseController
                     }
                 }
             }
+        }
+    }
+
+    public function addMetadatas()
+    {
+        $input['epsg'] = "EPSG:4326";
+
+        for ($i = 1; $i <= 641; $i++) {
+            $input['couche_id'] = $i;
+
+            $metadata = Metadata::create($input);
         }
     }
 }
