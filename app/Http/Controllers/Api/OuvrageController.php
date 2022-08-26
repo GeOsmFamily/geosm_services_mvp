@@ -1722,16 +1722,16 @@ class OuvrageController extends BaseController
                             file_put_contents(public_path() . '/datas/' . str_replace(' ', '', strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i))   . '.geojson', $response);
 
                             if ($ouvrages[$l] == 'Puit') {
-                                $logo =  'svg/puit.svg';
+                                $logo =  '/svg/puit.svg';
                             }
                             if ($ouvrages[$l] == 'Forage') {
-                                $logo =  'svg/forage.svg';
+                                $logo =  '/svg/forage.svg';
                             }
                             if ($ouvrages[$l] == 'Latrines') {
-                                $logo =  'svg/latrines.svg';
+                                $logo =  '/svg/latrines.svg';
                             }
                             if ($ouvrages[$l] == 'Pompe') {
-                                $logo =  'svg/pompe.svg';
+                                $logo =  '/svg/pompe.svg';
                             }
 
                             $data_src = public_path() . '/datas/' . str_replace(' ', '', strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i))  . '.geojson';
