@@ -1725,7 +1725,7 @@ class OuvrageController extends BaseController
                                 $logo =  'svg/puit.svg';
                             }
                             if ($ouvrages[$l] == 'Forage') {
-                                $logo =  '/svg/forage.svg';
+                                $logo =  'svg/forage.svg';
                             }
                             if ($ouvrages[$l] == 'Latrines') {
                                 $logo =  'svg/latrines.svg';
