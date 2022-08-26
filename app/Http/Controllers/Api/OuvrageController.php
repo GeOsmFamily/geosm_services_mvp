@@ -1716,110 +1716,56 @@ class OuvrageController extends BaseController
 
                         $response = $this->globalSearchLocal($syndicatarray[$j], $communearray[$k], $ouvrages[$l], $i);
 
-                        file_put_contents(public_path() . '/datas/' . strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i)  . '.geojson', $response);
+                        $data = json_decode($response, true);
 
-                        if ($ouvrages[$l] == 'Puit') {
-                            $logo = public_path() . '/svg/puit.svg';
-                        }
-                        if ($ouvrages[$l] == 'Forage') {
-                            $logo = public_path() . '/svg/forage.svg';
-                        }
-                        if ($ouvrages[$l] == 'Latrines') {
-                            $logo = public_path() . '/svg/latrines.svg';
-                        }
-                        if ($ouvrages[$l] == 'Pompe') {
-                            $logo = public_path() . '/svg/pompe.svg';
-                        }
+                        if (count($data['features']) > 0) {
+                            file_put_contents(public_path() . '/datas/' . strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i)  . '.geojson', $response);
 
-                        $data_src = public_path() . '/datas/' . strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i)  . '.geojson';
-
-
-
-                        $input['sous_thematique_id'] = 1;
-                        $input['nom'] = strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i);
-                        $input['nom_en']   = strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i);
-                        $input['geometry']  = 'point';
-                        $input['remplir_color']   =  '#009fe3';
-                        $input['contour_color'] =      '#009fe3';
-                        $input['service_carto']  =  'wms';
-                        $input['wms_type'] =    'data';
-
-
-                        $sousThematique = SousThematique::find($input['sous_thematique_id']);
-                        $schema = $sousThematique->thematique->schema . ' ' . $input['nom'];
-
-                        $input['schema_table_name'] = strtolower(preg_replace('/[^A-Za-z0-9]/', '', $schema));
-
-                        $input['identifiant'] = strtolower(preg_replace('/[^A-Za-z0-9]/', '', $input['nom']));
-
-                        $instance = Instance::find(1);
-
-                        $couche = Couche::create($input);
-
-                        $qgis_project_name = $instance->nom . $sousThematique->thematique->id;
-
-                        $response = Http::timeout(500)->post(env('CARTO_URL') . '/addotherlayer', [
-
-                            'qgis_project_name' => $qgis_project_name,
-                            'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
-                            'path_data' => '/var/www/html/src/geosm_mvp/' . $instance->nom .  $data_src,
-                            'geometry' => $couche->geometry,
-                            'identifiant' =>  $couche->identifiant,
-                            'path_logo' => '/var/www/html/src/geosm_mvp/' . $instance->nom .  $logo,
-                            'color' => $couche->remplir_color
-                        ]);
-
-                        if ($response->successful()) {
-                            $status = $response->json("status");
-                            $layer = $response->json("layer");
-                            if ($status) {
-                                $path_project = str_replace('/var/www/html/src/qgis/', '', $layer['path_project']);
-
-                                $qgis_url = env('URL_QGIS') . $path_project;
-                                $bbox = $layer['bbox'];
-                                $projection = $layer['scr'];
-                                $features = $layer['features'];
-
-                                $couche->qgis_url = $qgis_url;
-                                $couche->bbox = $bbox;
-                                $couche->projection = $projection;
-                                $couche->number_features = $features;
-                                $couche->save();
-                            } else {
-                                echo 'Erreur lors de la création de la couche.';
+                            if ($ouvrages[$l] == 'Puit') {
+                                $logo = public_path() . '/svg/puit.svg';
                             }
-                        } else {
-                            echo 'Erreur lors de la création de la couche.';
+                            if ($ouvrages[$l] == 'Forage') {
+                                $logo = public_path() . '/svg/forage.svg';
+                            }
+                            if ($ouvrages[$l] == 'Latrines') {
+                                $logo = public_path() . '/svg/latrines.svg';
+                            }
+                            if ($ouvrages[$l] == 'Pompe') {
+                                $logo = public_path() . '/svg/pompe.svg';
+                            }
+
+                            $data_src = public_path() . '/datas/' . strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i)  . '.geojson';
+
+
+
+                            $input['sous_thematique_id'] = 1;
+                            $input['nom'] = strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i);
+                            $input['nom_en']   = strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i);
+                            $input['geometry']  = 'point';
+                            $input['remplir_color']   =  '#009fe3';
+                            $input['contour_color'] =      '#009fe3';
+                            $input['service_carto']  =  'wfs';
+                            $input['wms_type'] =    'data';
+                            $input['logo'] = $logo;
+
+
+                            $sousThematique = SousThematique::find($input['sous_thematique_id']);
+                            $schema = $sousThematique->thematique->schema . ' ' . $input['nom'];
+
+                            $input['schema_table_name'] = strtolower(preg_replace('/[^A-Za-z0-9]/', '', $schema));
+
+                            $input['identifiant'] = strtolower(preg_replace('/[^A-Za-z0-9]/', '', $input['nom']));
+
+                            $couche = Couche::create($input);
+
+                            $couche->identifiant = $input['identifiant'];
+                            $couche->qgis_url = 'https://qgis.geosm.org/ows?map=pradec/pradec.qgs';
+
+                            $couche->number_features = count($data['features']);
+                            $couche->save();
                         }
 
-
-                        echo 'Couche créée avec succès.';
-
-
-                        /* Http::attach(
-                            'logo',
-                            file_get_contents(public_path() . '/' . $logo),
-
-                        )->attach(
-                            'data_src',
-                            file_get_contents(public_path() . '/datas/' . strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i)  . '.geojson'),
-                            strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i)  . '.geojson',
-
-                        )->withHeaders([
-                            'Authorization' => 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiYjRmNjc3MDcxOTA0ODBjMzg5NDQzYjlkNjRjNTU0MDY2Yzk4MDNjYjBjYmFjODlkNjcxZjUxMTk5ZWQyNzJjYWU4OTM1YjZiZjU5ZDk2YTQiLCJpYXQiOjE2NjE1MTgxNTguODQ2NTUxLCJuYmYiOjE2NjE1MTgxNTguODQ2NTUyLCJleHAiOjE2NjQxMTAxNTguODQwNTI0LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.BPataVNvHDN80lP5GsGdZ6JbPNS6VknEUO3TraTF8YrrBpj8dEJOa_MKGftFHMO-nZEsw1sdWAkYocehlLDIk9iB7nDrH3nFtacifTGxhQC7UvXCg_ob5Tq63CaggQyBX-QXI5hyKVS02Wncq1Jzt7dBp70Ewba8ZODtJ-CU37W4PlFNj52zeqNQsOZKz-KwMt37YCZAaYMSpy--06KaxXfK3JH_-YUWaYVytDrBgmpD7433dNLaIVCjnlFlPwDilkVnSC57JuDOjoBszshKDf9WDoz4WtdWgYnYne_ub85po_HPcOCMKlNvyUEiPYsK6xMZ9w708TH7oG9yziVxQzof9jU2mN8C1mzwd9ymDaZKZ-UfGjy8YFwOHaanmS4mjyenySVkA5j_WJo5REXC3sh9h0ksJzWwy7CBmMUcz5pceJPJNoncOJxuz3BAPY5WGoHaMcThoopJKKt7VrpTf9F9oezksjGnhBcrxkCI5sVXp4szPC2pQggm2JafOHkGqaZUCiUv1QKeqxwcVlUwWFAB5tw8kU9Z5a8dxhJClnwBOXO_A7wcOSMeehcBGLtviZK2_4wJpARSTAR4fH1kzKERWgdej_DilT6T991HLrg_G4hV9NuDrm9w-zijn0xbFhfNOWlz1TaRBhQPaE2l7oTlQoZ7FaOlosf0S2eJ3YU',
-                            'X-Authorization' => '4rqxvQTkRzD56ZYFepB7AxPddrj24yVKHcNxHfk8eqRirN0WHeOwKLP2vCFk6jEj',
-                            'Content-Type' => 'multipart/form-data',
-                            'Accept' => 'application/json'
-                        ])->timeout(500)->post('https://pradecservices.geosm.org/api/couches', [
-                            'sous_thematique_id' => 1,
-                            'nom' => strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i),
-                            'nom_en' => strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i),
-                            'geometry' => 'point',
-                            'remplir_color' =>  '#009fe3',
-                            'contour_color' =>  '#009fe3',
-                            'service_carto' =>  'wms',
-                            'wms_type' =>  'data',
-                        ]);*/
+                        /*   */
                     }
                 }
             }
