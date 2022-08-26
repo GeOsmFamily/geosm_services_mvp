@@ -1765,7 +1765,7 @@ class OuvrageController extends BaseController
                             'path_data' => '/var/www/html/src/geosm_mvp/' . $instance->nom .  $data_src,
                             'geometry' => $couche->geometry,
                             'identifiant' =>  $couche->identifiant,
-                            'path_logo' => '/var/www/html/src/geosm_mvp/' . $instance->nom .  $couche->logo,
+                            'path_logo' => '/var/www/html/src/geosm_mvp/' . $instance->nom .  $logo,
                             'color' => $couche->remplir_color
                         ]);
 
@@ -1786,11 +1786,14 @@ class OuvrageController extends BaseController
                                 $couche->number_features = $features;
                                 $couche->save();
                             } else {
-                                return $this->sendError('Erreur lors de la création de la couche.', $response->json("message"), 400);
+                                echo 'Erreur lors de la création de la couche.';
                             }
                         } else {
-                            return $this->sendError('Erreur lors de la création de la couche.', "Request Failed", 400);
+                            echo 'Erreur lors de la création de la couche.';
                         }
+
+
+                        echo 'Couche créée avec succès.';
 
 
                         /* Http::attach(
