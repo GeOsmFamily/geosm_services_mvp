@@ -1719,7 +1719,7 @@ class OuvrageController extends BaseController
                         $data = json_decode($response, true);
 
                         if (count($data['features']) > 0) {
-                            file_put_contents(public_path() . '/datas/' . strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i)  . '.geojson', $response);
+                            file_put_contents(public_path() . '/datas/' . str_replace(' ', '', strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i))   . '.geojson', $response);
 
                             if ($ouvrages[$l] == 'Puit') {
                                 $logo =  'svg/puit.svg';
@@ -1734,13 +1734,13 @@ class OuvrageController extends BaseController
                                 $logo =  'svg/pompe.svg';
                             }
 
-                            $data_src = public_path() . '/datas/' . strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i)  . '.geojson';
+                            $data_src = public_path() . '/datas/' . str_replace(' ', '', strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i))  . '.geojson';
 
 
 
                             $input['sous_thematique_id'] = 1;
-                            $input['nom'] = strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i);
-                            $input['nom_en']   = strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i);
+                            $input['nom'] = str_replace(' ', '', strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i));
+                            $input['nom_en']   = str_replace(' ', '', strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i));
                             $input['geometry']  = 'point';
                             $input['remplir_color']   =  '#009fe3';
                             $input['contour_color'] =      '#009fe3';
