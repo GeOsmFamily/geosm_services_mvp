@@ -79,6 +79,8 @@ Route::middleware('auth.apikey')->group(
         Route::post('ouvragesglobalsearch', [App\Http\Controllers\Api\OuvrageController::class, 'globalSearch']);
         Route::get('ouvrages/{id}', [App\Http\Controllers\Api\OuvrageController::class, 'show']);
 
+        Route::get('generatesfiles', [App\Http\Controllers\Api\OuvrageController::class, 'generateFilesRequest']);
+
         //Draw
         Route::get('draws', [App\Http\Controllers\Api\DrawController::class, 'index']);
         Route::get('draws/code/{code}', [App\Http\Controllers\Api\DrawController::class, 'getAllDrawByCode']);
