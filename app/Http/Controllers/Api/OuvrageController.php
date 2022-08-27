@@ -1698,7 +1698,7 @@ class OuvrageController extends BaseController
         $syndicatarray = ['Tout', 'SYNCOBE', 'SYNCOMALOU', 'SYDECOMAR'];
         $communearray = ['Tout', 'BIBEMI', 'LAGDO', 'GAROUA 2', 'GAROUA 1', 'GAROUA 3', 'TOUROUA', 'BARNDAKE', 'PITOA', 'NGONG', 'GASHIGA', 'BASHEO', 'DEMBO', 'FIGUIL', 'GUIDER', 'MAYO OULO', 'MADINGRING', 'TOUBORO', 'TCHOLIRE', 'REY BOUBA'];
         $ouvrages = ['Puit', 'Forage', 'Latrines', 'Pompe'];
-        $questions = ['en bon etat', 'endomagés', 'en bon etat non fonctionnel', 'en bon etat fonctionnel', 'en bon etat fonctionnel et mauvaise qualite eau', 'en bon etat fonctionnel et bonne qualite eau', 'ayant un commite de gestion fonctionnel', 'en bon etat non fonctionnel et ayant un commité de gestion', 'en bon etat fonctionnel et n\'ayant pas un commité de gestion'];
+        $questions = ['en bon etat', 'endomagés', 'en bon etat non fonctionnel', 'en bon etat fonctionnel', 'en bon etat fonctionnel et mauvaise qualite eau', 'en bon etat non fonctionnel et bonne qualite eau', 'ayant un commite de gestion formel', 'ayant un commite de gestion informel', 'en bon etat non fonctionnel et ayant un commité de gestion', 'en bon etat fonctionnel et n\'ayant pas un commité de gestion'];
 
 
         for ($j = 0; $j < count($syndicatarray); $j++) {
