@@ -907,19 +907,9 @@ class OuvrageController extends BaseController
             ];
         }
 
-        $name = [
-            "name" => "urn:ogc:def:crs:OGC:1.3:CRS84"
-        ];
-
-        $crs = [
-            "type" => "name", "properties" => $name
-        ];
-
 
         $geojson = [
             "type" => "FeatureCollection",
-            "name" => "sql_statement",
-            "crs" =>  $crs,
             "features" => $response
         ];
 
