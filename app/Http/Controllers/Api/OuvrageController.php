@@ -1732,12 +1732,12 @@ class OuvrageController extends BaseController
 
                             $input['sous_thematique_id'] = 1;
                             if ($syndicatarray[$j] == 'Tout') {
-                                $input['nom'] = strtolower('Ouvrages' . '(' . $ouvrages[$l] . ')' . $questions[$i]);
-                                $input['nom_en']   = strtolower('Ouvrages' . '(' . $ouvrages[$l] . ')' . $questions[$i]);
+                                $input['nom'] = strtolower('Ouvrages' . '(' . $ouvrages[$l] . ')' . $questions[$i - 1]);
+                                $input['nom_en']   = strtolower('Ouvrages' . '(' . $ouvrages[$l] . ')' . $questions[$i - 1]);
                             } else {
 
-                                $input['nom'] = strtolower('Ouvrages' . '(' . $ouvrages[$l] . ')' . $syndicatarray[$j] . $questions[$i]);
-                                $input['nom_en']   = strtolower('Ouvrages' . '(' . $ouvrages[$l] . ')' . $syndicatarray[$j] . $questions[$i]);
+                                $input['nom'] = strtolower('Ouvrages' . '(' . $ouvrages[$l] . ')' . $syndicatarray[$j] . $questions[$i - 1]);
+                                $input['nom_en']   = strtolower('Ouvrages' . '(' . $ouvrages[$l] . ')' . $syndicatarray[$j] . $questions[$i - 1]);
                             }
                             $input['geometry']  = 'point';
                             $input['remplir_color']   =  '#009fe3';
