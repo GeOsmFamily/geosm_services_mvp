@@ -1698,6 +1698,7 @@ class OuvrageController extends BaseController
         $syndicatarray = ['Tout', 'SYNCOBE', 'SYNCOMALOU', 'SYDECOMAR'];
         $communearray = ['Tout', 'BIBEMI', 'LAGDO', 'GAROUA 2', 'GAROUA 1', 'GAROUA 3', 'TOUROUA', 'BARNDAKE', 'PITOA', 'NGONG', 'GASHIGA', 'BASHEO', 'DEMBO', 'FIGUIL', 'GUIDER', 'MAYO OULO', 'MADINGRING', 'TOUBORO', 'TCHOLIRE', 'REY BOUBA'];
         $ouvrages = ['Puit', 'Forage', 'Latrines', 'Pompe'];
+        $questions = ['en bon etat', 'endomagés', 'en bon etat non fonctionnel', 'en bon etat fonctionnel', 'en bon etat fonctionnel et mauvaise qualite eau', 'en bon etat fonctionnel et bonne qualite eau', 'ayant un commite de gestion fonctionnel', 'en bon etat non fonctionnel et ayant un commité de gestion', 'en bon etat fonctionnel et n\'ayant pas un commité de gestion'];
 
 
         for ($j = 0; $j < count($syndicatarray); $j++) {
@@ -1730,8 +1731,14 @@ class OuvrageController extends BaseController
 
 
                             $input['sous_thematique_id'] = 1;
-                            $input['nom'] = str_replace(' ', '', strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i));
-                            $input['nom_en']   = str_replace(' ', '', strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i));
+                            if ($syndicatarray[$j] == 'Tout') {
+                                $input['nom'] = strtolower('Ouvrages' . '(' . $ouvrages[$l] . ')' . $questions[$i]);
+                                $input['nom_en']   = strtolower('Ouvrages' . '(' . $ouvrages[$l] . ')' . $questions[$i]);
+                            } else {
+
+                                $input['nom'] = strtolower('Ouvrages' . '(' . $ouvrages[$l] . ')' . $syndicatarray[$j] . $questions[$i]);
+                                $input['nom_en']   = strtolower('Ouvrages' . '(' . $ouvrages[$l] . ')' . $syndicatarray[$j] . $questions[$i]);
+                            }
                             $input['geometry']  = 'point';
                             $input['remplir_color']   =  '#009fe3';
                             $input['contour_color'] =      '#009fe3';
@@ -1745,7 +1752,7 @@ class OuvrageController extends BaseController
 
                             $input['schema_table_name'] = strtolower(preg_replace('/[^A-Za-z0-9]/', '', $schema));
 
-                            $input['identifiant'] = strtolower(preg_replace('/[^A-Za-z0-9]/', '', $input['nom']));
+                            $input['identifiant'] = str_replace(' ', '', strtolower($syndicatarray[$j] . $communearray[$k] . $ouvrages[$l] . 'q' . $i));
 
                             $couche = Couche::create($input);
 
