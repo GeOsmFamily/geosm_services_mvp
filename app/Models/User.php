@@ -138,4 +138,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(SocialOsmAccount::class);
     }
+
+    public function commentaires()
+    {
+        return $this->hasMany(Commentaire::class);
+    }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class BaseController extends Controller
 {
@@ -28,7 +27,7 @@ class BaseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendError($error, $errorMessages = [], $code = 401)
+    public function sendError($error, $errorMessages = [], $code = 400)
     {
         $response = [
             'success' => false,
