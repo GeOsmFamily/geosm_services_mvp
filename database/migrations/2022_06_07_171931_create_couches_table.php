@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('remplir_color')->default('#808080');
             $table->string('contour_color')->default('#808080');
             $table->string('service_carto')->nullable();
-            $table->string('identifiant')->nullable();
+            $table->text('identifiant')->nullable();
             $table->string('wms_type')->nullable();
             $table->string('logo')->nullable();
             $table->text('sql')->nullable();
