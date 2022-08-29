@@ -270,7 +270,7 @@ class CoucheController extends BaseController
                             return $this->sendError('Erreur lors de la création de la couche.', "Request Failed", 400);
                         }
                     } else {
-                        $response = Http::timeout(500)->post(env('CARTO_URL') . '/creategpkg', [
+                        $response = Http::timeout(500)->post(env('CARTO_URL') . '/addotherlayer', [
 
                             'qgis_project_name' => $qgis_project_name,
                             'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
