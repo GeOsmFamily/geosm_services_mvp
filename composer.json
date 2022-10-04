@@ -11,7 +11,7 @@
         "http-interop/http-factory-guzzle": "^1.2",
         "knuckleswtf/scribe": "^3.29",
         "laravel/framework": "^9.11",
-        "laravel/passport": "^10.4",
+        "laravel/passport": "^11.2",
         "laravel/sanctum": "^3.0.1",
         "laravel/scout": "^9.4",
         "laravel/socialite": "^5.5",
