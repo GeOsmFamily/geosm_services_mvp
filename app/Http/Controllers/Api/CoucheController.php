@@ -85,6 +85,7 @@ class CoucheController extends BaseController
                 'wms_type' => 'string',
                 'logo' => 'file',
                 'condition' => 'string',
+                'data_src' => 'mimes:zip,geojson,kml,gpkg',
                 'data_qml' => 'file',
                 'key' => 'string',
                 'value' => 'string',
