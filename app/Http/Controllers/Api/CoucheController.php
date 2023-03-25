@@ -163,7 +163,7 @@ class CoucheController extends BaseController
                             'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
                             'geometry' => $couche->geometry,
                             'identifiant' =>  $couche->identifiant,
-                            'path_qml' => '/var/www/html/src/geosm_mvp/' . $instance->nom . '/backend'  . $data_qml,
+                            'path_qml' => '/var/www/geosm/carto/src/geosm_mvp/' . $instance->nom . '/backend'  . $data_qml,
                         ]);
 
 
@@ -202,7 +202,7 @@ class CoucheController extends BaseController
                             'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
                             'geometry' => $couche->geometry,
                             'identifiant' =>  $couche->identifiant,
-                            'path_logo' => '/var/www/html/src/geosm_mvp/' . $instance->nom . '/backend'  . $logo_path,
+                            'path_logo' => '/var/www/geosm/carto/src/geosm_mvp/' . $instance->nom . '/backend'  . $logo_path,
                             'color' => $couche->remplir_color
                         ]);
 
@@ -240,10 +240,10 @@ class CoucheController extends BaseController
                         $response = Http::timeout(500)->post(env('CARTO_URL') . '/addotherlayer', [
                             'qgis_project_name' => $qgis_project_name,
                             'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
-                            'path_data' => '/var/www/html/src/geosm_mvp/' . $instance->nom . '/backend' .   $data_src,
+                            'path_data' => '/var/www/geosm/carto/src/geosm_mvp/' . $instance->nom . '/backend' .   $data_src,
                             'geometry' => $couche->geometry,
                             'identifiant' =>  $couche->identifiant,
-                            'path_qml' => '/var/www/html/src/geosm_mvp/' . $instance->nom . '/backend' .  $data_qml,
+                            'path_qml' => '/var/www/geosm/carto/src/geosm_mvp/' . $instance->nom . '/backend' .  $data_qml,
                         ]);
 
 
@@ -274,10 +274,10 @@ class CoucheController extends BaseController
 
                             'qgis_project_name' => $qgis_project_name,
                             'path_qgis' => '/var/www/html/src/qgis/' . $instance->nom,
-                            'path_data' => '/var/www/html/src/geosm_mvp/' . $instance->nom . '/backend' .  $data_src,
+                            'path_data' => '/var/www/geosm/carto/src/geosm_mvp/' . $instance->nom . '/backend' .  $data_src,
                             'geometry' => $couche->geometry,
                             'identifiant' =>  $couche->identifiant,
-                            'path_logo' => '/var/www/html/src/geosm_mvp/' . $instance->nom . '/backend' .  $couche->logo,
+                            'path_logo' => '/var/www/geosm/carto/src/geosm_mvp/' . $instance->nom . '/backend' .  $couche->logo,
                             'color' => $couche->remplir_color
                         ]);
 
