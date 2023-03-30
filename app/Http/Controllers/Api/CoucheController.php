@@ -481,11 +481,16 @@ class CoucheController extends BaseController
 
                 $sousThematique = SousThematique::find($couche->sous_thematique_id);
                 $thematique = $sousThematique->thematique;
-                $table = $thematique->schema . '."' . $couche->schema_table_name . '"';
+                if ($couche->wms_type == 'osm') {
 
-                DB::select('DROP TABLE ' . $table);
+                    $table = $thematique->schema . '."' . $couche->schema_table_name . '"';
 
-                $couche->tags()->delete();
+                    DB::select('DROP TABLE ' . $table);
+
+
+                    $couche->tags()->delete();
+                }
+
 
                 $couche->delete();
 
