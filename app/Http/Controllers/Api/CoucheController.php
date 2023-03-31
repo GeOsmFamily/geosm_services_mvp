@@ -277,7 +277,7 @@ class CoucheController extends BaseController
                             'path_data' => '/var/www/html/src/geosm_mvp/' . $instance->nom . '/backend' .  $data_src,
                             'geometry' => $couche->geometry,
                             'identifiant' =>  $couche->identifiant,
-                            'path_logo' => '/var/www/html/src/geosm_mvp/' . $instance->nom . '/backend' .  $couche->logo,
+                            'path_logo' => '/var/www/html/src/geosm_mvp/' . $instance->nom . '/backend' .  $logo_path,
                             'color' => $couche->remplir_color
                         ]);
 
