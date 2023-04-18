@@ -5,7 +5,7 @@ New Services Laravel for project GeOsm
 ## Installation
 
 ```sh
-$ git clone https://github.com/GeOsmFamily/geosm_services_mvp.git
+$ git clone -b urbanisme https://github.com/GeOsmFamily/geosm_services_mvp.git backend
 $ cd geosm_services_mvp
 $ cp .env.example .env
 ```
