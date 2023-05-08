@@ -1,37 +1,37 @@
 version: "3"
 services:
-    geoportail_eneo:
+    geoportail_world:
         build:
             context: .
             dockerfile: .docker/Dockerfile
-        image: geoportail_eneo
-        container_name: geoportail_eneo
+        image: geoportail_world
+        container_name: geoportail_world
         ports:
             - "${APP_PORT:-80}:80"
         volumes:
             - ./:/var/www/html
             - ./docker/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
         networks:
-            - geoportail_eneo
+            - geoportail_world
         depends_on:
-            - geoportail_eneo_pgsql
-            - geoportail_eneo_meilisearch
+            - geoportail_world_pgsql
+            - geoportail_world_meilisearch
 
-    geoportail_eneo_pgsql:
+    geoportail_world_pgsql:
         restart: always
         build:
             context: .
             dockerfile: .docker/Dockerfile-db
         ports:
             - "${FORWARD_DB_PORT:-5432}:5432"
-        container_name: geoportail_eneo_pgsql
+        container_name: geoportail_world_pgsql
         environment:
             PGPASSWORD: "${PG_PASSWORD:-secret}"
             POSTGRES_DB: "${DB_DATABASE}"
             POSTGRES_USER: "${DB_USERNAME}"
             POSTGRES_PASSWORD: "${DB_PASSWORD:-secret}"
         networks:
-            - geoportail_eneo
+            - geoportail_world
         healthcheck:
             test:
                 [
@@ -46,8 +46,8 @@ services:
             retries: 3
             timeout: 5s
 
-    geoportail_eneo_meilisearch:
-        container_name: geoportail_eneo_meilisearch
+    geoportail_world_meilisearch:
+        container_name: geoportail_world_meilisearch
         image: getmeili/meilisearch:v0.27.2
         environment:
             - http_proxy
@@ -59,9 +59,9 @@ services:
         ports:
             - ${MEILI_PORT:-7700}:7700
         networks:
-            - geoportail_eneo
+            - geoportail_world
         volumes:
-            - "geoportail_eneo_meilisearch:/data.ms"
+            - "geoportail_world_meilisearch:/data.ms"
         restart: unless-stopped
         healthcheck:
             test:
@@ -70,13 +70,13 @@ services:
                     "wget",
                     "--no-verbose",
                     "--spider",
-                    "http://geoportail_eneo_meilisearch:7700/health",
+                    "http://geoportail_world_meilisearch:7700/health",
                 ]
             retries: 3
             timeout: 5s
 networks:
-    geoportail_eneo:
+    geoportail_world:
         driver: bridge
 volumes:
-    geoportail_eneo_meilisearch:
+    geoportail_world_meilisearch:
         driver: local
