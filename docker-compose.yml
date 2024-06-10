@@ -1,43 +1,43 @@
 version: "3"
 services:
-    geoportail_womangue:
+    geoportail_cameroun:
         build:
             context: .
             dockerfile: .docker/Dockerfile
-        image: geoportail_womangue
-        container_name: geoportail_womangue
+        image: geoportail_cameroun
+        container_name: geoportail_cameroun
         ports:
             - '${APP_PORT:-80}:80'
         volumes:
             - ./:/var/www/html
         networks:
-            - geoportail_womangue
+            - geoportail_cameroun
         depends_on:
-            - geoportail_womangue_pgsql
-            - geoportail_womangue_meilisearch
+            - geoportail_cameroun_pgsql
+            - geoportail_cameroun_meilisearch
 
-    geoportail_womangue_pgsql:
+    geoportail_cameroun_pgsql:
         restart: always
         build:
             context: .
             dockerfile: .docker/Dockerfile-db
         ports:
             - '${FORWARD_DB_PORT:-5432}:5432'
-        container_name: geoportail_womangue_pgsql
+        container_name: geoportail_cameroun_pgsql
         environment:
             PGPASSWORD: '${PG_PASSWORD:-secret}'
             POSTGRES_DB: '${DB_DATABASE}'
             POSTGRES_USER: '${DB_USERNAME}'
             POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
         networks:
-            - geoportail_womangue
+            - geoportail_cameroun
         healthcheck:
             test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
             retries: 3
             timeout: 5s
 
-    geoportail_womangue_meilisearch:
-        container_name: geoportail_womangue_meilisearch
+    geoportail_cameroun_meilisearch:
+        container_name: geoportail_cameroun_meilisearch
         image: getmeili/meilisearch:v0.27.2
         environment:
             - http_proxy
@@ -49,17 +49,17 @@ services:
         ports:
             - ${MEILI_PORT:-7700}:7700
         networks:
-            - geoportail_womangue
+            - geoportail_cameroun
         volumes:
-            - 'geoportail_womangue_meilisearch:/data.ms'
+            - 'geoportail_cameroun_meilisearch:/data.ms'
         restart: unless-stopped
         healthcheck:
-          test: ["CMD", "wget", "--no-verbose", "--spider",  "http://geoportail_womangue_meilisearch:7700/health"]
+          test: ["CMD", "wget", "--no-verbose", "--spider",  "http://geoportail_cameroun_meilisearch:7700/health"]
           retries: 3
           timeout: 5s
 networks:
-    geoportail_womangue:
+    geoportail_cameroun:
         driver: bridge
 volumes:
-    geoportail_womangue_meilisearch:
+    geoportail_cameroun_meilisearch:
         driver: local

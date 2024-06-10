@@ -5,8 +5,8 @@ New Services Laravel for project GeOsm
 ## Installation
 
 ```sh
-$ git clone https://github.com/GeOsmFamily/geosm_services_mvp.git
-$ cd geosm_services_mvp
+$ git clone https://github.com/GeOsmFamily/geosm_services_mvp.git backend
+$ cd backend
 $ cp .env.example .env
 ```
 
@@ -66,7 +66,7 @@ MEILI_PORT=
 
 ```
 $ docker-compose up -d
-$ docker exec -it geoportail_cuy bash
+$ docker exec -it geoportail_cameroun bash
 $ composer install
 ```
 
@@ -95,8 +95,8 @@ $ chown -R www-data:www-data *
 -   execute command and change params
 
 ```
-$ docker exec -it geoportail_cuy bash
-$ ogr2ogr -f "PostgreSQL" PG:"host=geoportail_cuy_pgsql user=postgres dbname=cuy password=postgres" shp/cuy.shp   -nln temp_table -nlt MULTIPOLYGON  -lco GEOMETRY_NAME=geom -lco precision=NO
+$ docker exec -it geoportail_cameroun bash
+$ ogr2ogr -f "PostgreSQL" PG:"host=geoportail_cameroun_pgsql user=postgres dbname=cameroun password=postgres" shp/cameroun.shp   -nln temp_table -nlt MULTIPOLYGON  -lco GEOMETRY_NAME=geom -lco precision=NO
 ```
 
 -   go to pgadmin and execute query
@@ -114,7 +114,7 @@ TRUNCATE temp_table;
 -   load osm data
 
 ```
-$ osm2pgsql --cache 10000 --number-processes 5 --extra-attributes --slim -G -c -U postgres -d $db -H localhost -W --hstore-all -S osm/default.style https://download.geofabrik.de/africa/mali-latest.osm.pbf
+$ osm2pgsql --cache 10000 --number-processes 5 --extra-attributes --slim -G -c -U postgres -d $db -H localhost -W --hstore-all -S osm/default.style https://download.geofabrik.de/africa/cameroon-latest.osm.pbf
 ```
 
 ## Documentation
