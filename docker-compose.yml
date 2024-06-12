@@ -1,43 +1,52 @@
 version: "3"
 services:
-    geoportail_cameroun:
+    geoportail_soa:
         build:
             context: .
             dockerfile: .docker/Dockerfile
-        image: geoportail_cameroun
-        container_name: geoportail_cameroun
+        image: geoportail_soa
+        container_name: geoportail_soa
         ports:
             - '${APP_PORT:-80}:80'
         volumes:
             - ./:/var/www/html
         networks:
-            - geoportail_cameroun
+            - geoportail_soa
         depends_on:
-            - geoportail_cameroun_pgsql
-            - geoportail_cameroun_meilisearch
+            - geoportail_soa_pgsql
+            - geoportail_soa_meilisearch
 
-    geoportail_cameroun_pgsql:
+    geoportail_soa_pgsql:
         restart: always
         build:
             context: .
             dockerfile: .docker/Dockerfile-db
         ports:
             - '${FORWARD_DB_PORT:-5432}:5432'
-        container_name: geoportail_cameroun_pgsql
+        container_name: geoportail_soa_pgsql
         environment:
             PGPASSWORD: '${PG_PASSWORD:-secret}'
             POSTGRES_DB: '${DB_DATABASE}'
             POSTGRES_USER: '${DB_USERNAME}'
             POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
         networks:
-            - geoportail_cameroun
+            - geoportail_soa
         healthcheck:
-            test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
+            test:
+                [
+                    "CMD",
+                    "pg_isready",
+                    "-q",
+                    "-d",
+                    "${DB_DATABASE}",
+                    "-U",
+                    "${DB_USERNAME}"
+                ]
             retries: 3
             timeout: 5s
 
-    geoportail_cameroun_meilisearch:
-        container_name: geoportail_cameroun_meilisearch
+    geoportail_soa_meilisearch:
+        container_name: geoportail_soa_meilisearch
         image: getmeili/meilisearch:v0.27.2
         environment:
             - http_proxy
@@ -49,17 +58,24 @@ services:
         ports:
             - ${MEILI_PORT:-7700}:7700
         networks:
-            - geoportail_cameroun
+            - geoportail_soa
         volumes:
-            - 'geoportail_cameroun_meilisearch:/data.ms'
+            - 'geoportail_soa_meilisearch:/data.ms'
         restart: unless-stopped
         healthcheck:
-          test: ["CMD", "wget", "--no-verbose", "--spider",  "http://geoportail_cameroun_meilisearch:7700/health"]
-          retries: 3
-          timeout: 5s
+            test:
+                [
+                    "CMD",
+                    "wget",
+                    "--no-verbose",
+                    "--spider",
+                    "http://geoportail_soa_meilisearch:7700/health"
+                ]
+            retries: 3
+            timeout: 5s
 networks:
-    geoportail_cameroun:
+    geoportail_soa:
         driver: bridge
 volumes:
-    geoportail_cameroun_meilisearch:
+    geoportail_soa_meilisearch:
         driver: local
