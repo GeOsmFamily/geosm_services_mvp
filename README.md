@@ -5,7 +5,7 @@ New Services Laravel for project GeOsm
 ## Installation
 
 ```sh
-$ git clone -b soa https://github.com/GeOsmFamily/geosm_services_mvp.git backend
+$ git clone -b adc https://github.com/GeOsmFamily/geosm_services_mvp.git backend
 $ cd backend
 $ cp .env.example .env
 ```
@@ -66,7 +66,7 @@ MEILI_PORT=
 
 ```
 $ docker-compose up -d
-$ docker exec -it geoportail_soa bash
+$ docker exec -it geoportail_adc bash
 $ composer install
 ```
 
@@ -95,8 +95,8 @@ $ chown -R www-data:www-data *
 -   execute command and change params
 
 ```
-$ docker exec -it geoportail_soa bash
-$ ogr2ogr -f "PostgreSQL" PG:"host=geoportail_soa_pgsql user=postgres dbname=soa password=postgres" shp/soa.shp   -nln temp_table -nlt MULTIPOLYGON  -lco GEOMETRY_NAME=geom -lco precision=NO
+$ docker exec -it geoportail_adc bash
+$ ogr2ogr -f "PostgreSQL" PG:"host=geoportail_adc_pgsql user=postgres dbname=adc password=postgres" shp/adc.shp   -nln temp_table -nlt MULTIPOLYGON  -lco GEOMETRY_NAME=geom -lco precision=NO
 ```
 
 -   go to pgadmin and execute query

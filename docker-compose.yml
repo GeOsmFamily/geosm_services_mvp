@@ -1,36 +1,36 @@
 version: "3"
 services:
-    geoportail_soa:
+    geoportail_adc:
         build:
             context: .
             dockerfile: .docker/Dockerfile
-        image: geoportail_soa
-        container_name: geoportail_soa
+        image: geoportail_adc
+        container_name: geoportail_adc
         ports:
             - '${APP_PORT:-80}:80'
         volumes:
             - ./:/var/www/html
         networks:
-            - geoportail_soa
+            - geoportail_adc
         depends_on:
-            - geoportail_soa_pgsql
-            - geoportail_soa_meilisearch
+            - geoportail_adc_pgsql
+            - geoportail_adc_meilisearch
 
-    geoportail_soa_pgsql:
+    geoportail_adc_pgsql:
         restart: always
         build:
             context: .
             dockerfile: .docker/Dockerfile-db
         ports:
             - '${FORWARD_DB_PORT:-5432}:5432'
-        container_name: geoportail_soa_pgsql
+        container_name: geoportail_adc_pgsql
         environment:
             PGPASSWORD: '${PG_PASSWORD:-secret}'
             POSTGRES_DB: '${DB_DATABASE}'
             POSTGRES_USER: '${DB_USERNAME}'
             POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
         networks:
-            - geoportail_soa
+            - geoportail_adc
         healthcheck:
             test:
                 [
@@ -45,8 +45,8 @@ services:
             retries: 3
             timeout: 5s
 
-    geoportail_soa_meilisearch:
-        container_name: geoportail_soa_meilisearch
+    geoportail_adc_meilisearch:
+        container_name: geoportail_adc_meilisearch
         image: getmeili/meilisearch:v0.27.2
         environment:
             - http_proxy
@@ -58,9 +58,9 @@ services:
         ports:
             - ${MEILI_PORT:-7700}:7700
         networks:
-            - geoportail_soa
+            - geoportail_adc
         volumes:
-            - 'geoportail_soa_meilisearch:/data.ms'
+            - 'geoportail_adc_meilisearch:/data.ms'
         restart: unless-stopped
         healthcheck:
             test:
@@ -69,13 +69,13 @@ services:
                     "wget",
                     "--no-verbose",
                     "--spider",
-                    "http://geoportail_soa_meilisearch:7700/health"
+                    "http://geoportail_adc_meilisearch:7700/health"
                 ]
             retries: 3
             timeout: 5s
 networks:
-    geoportail_soa:
+    geoportail_adc:
         driver: bridge
 volumes:
-    geoportail_soa_meilisearch:
+    geoportail_adc_meilisearch:
         driver: local
